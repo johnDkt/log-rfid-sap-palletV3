@@ -1,0 +1,4 @@
+set +x
+echo "Uninstall "%{name}" version "%{version}" release "%{release} " on "$(date) >> /data/logs/%{name}/uninstall.log
+echo "Content :" >> /data/logs/%{name}/uninstall.log
+rpm -ql %{name} | awk '{print " "$0}' >> /data/logs/%{name}/uninstall.log

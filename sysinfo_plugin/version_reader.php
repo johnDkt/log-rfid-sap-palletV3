@@ -1,0 +1,5 @@
+<?php
+
+$version_reader="";
+
+?>

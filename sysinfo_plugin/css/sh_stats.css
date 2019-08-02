@@ -1,0 +1,46 @@
+.show_stats_table {
+    border-width: 1px;
+    border-style: solid;  
+}
+
+.show_stats_row{
+    background-color: #EEEEEE;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.show_stats_table th {
+    font-weight: normal;
+}
+
+.show_stats_table td {
+    text-align: center;
+}
+
+.show_stats_table thead th {
+    color: #FFFFFF;
+    background-color: #999999;
+    text-align: center;
+    font-weight: bold;
+}
+
+.show_stats_table a {
+    color: #FFFF33;
+}
+
+.show_stats_title {
+    font-weight: bold;
+    font-siez: 1em;
+}
+
+.show_stats_th_legend {
+    width: 400px;
+}
+
+.show_stats_th_value {
+    width: 150px;
+}
+
+.left_align {
+    text-align: left;
+}

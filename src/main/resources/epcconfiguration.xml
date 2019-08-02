@@ -1,0 +1,50 @@
+<epc-configuration>
+	<!-- SGTIN -->
+	<epccode>
+		<type>1</type>
+		<header>00110000</header>
+		<filter>001</filter>
+		<partition>110</partition>
+		<company-length>20</company-length>
+		<company-digits>6</company-digits>
+		<reference-length>24</reference-length>
+		<reference-digits>7</reference-digits>
+		<serial-length>38</serial-length>
+	</epccode>
+	<!-- SSCC -->
+	<epccode>
+		<type>2</type>
+		<header>00110001</header>
+		<filter>010</filter>
+		<partition>110</partition>
+		<company-length>20</company-length>
+		<company-digits>6</company-digits>
+		<reference-length>38</reference-length>
+		<reference-digits>11</reference-digits>
+		<serial-length>24</serial-length>
+	</epccode>
+	<!-- SGLN -->
+	<epccode>
+		<type>3</type>
+		<header>00110010</header>
+		<filter>001</filter>
+		<partition>110</partition>
+		<company-length>20</company-length>
+		<company-digits>6</company-digits>
+		<reference-length>21</reference-length>
+		<reference-digits>6</reference-digits>
+		<serial-length>41</serial-length>
+	</epccode>
+	<!-- GRAI -->
+	<epccode>
+		<type>4</type>
+		<header>00110011</header>
+		<filter>000</filter>
+		<partition>110</partition>
+		<company-length>20</company-length>
+		<company-digits>6</company-digits>
+		<reference-length>24</reference-length>
+		<reference-digits>7</reference-digits>
+		<serial-length>38</serial-length>
+	</epccode>
+</epc-configuration> 

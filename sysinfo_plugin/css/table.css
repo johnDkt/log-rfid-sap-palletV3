@@ -1,0 +1,42 @@
+table {
+    background-color: white;
+}
+
+table caption {
+    text-align: center;
+    font-size: 1.3em;
+    background-color: #777;
+    color: white;
+    padding: 1em;
+}
+
+table * th{
+    background-color: #cccccc;
+}
+
+section {
+    -webkit-box-shadow: 3px 2px 5px 1px rgba(0,0,0,0.33);
+    -moz-box-shadow: 3px 2px 5px 1px rgba(0,0,0,0.33);
+    box-shadow: 3px 2px 5px 1px rgba(0,0,0,0.33);
+    padding: 0;
+    margin: 25px;
+    border: 1px solid #cccccc;
+    background-color: #f5f5f5;
+}
+
+section header {
+    width: 100%;
+    background-color: #cccccc;
+    font-size: 1.3em;
+    padding: 0.5em;
+}
+
+section article {
+    padding: 0.3em;
+}
+
+mark {
+    background-color: yellow;
+    color: black;
+}
+

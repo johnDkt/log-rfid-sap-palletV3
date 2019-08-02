@@ -1,0 +1,76 @@
+function writeDataInConfigMgt {
+	local data=$1;
+	sed "$data/d" -i %{configmgt}/DEFAULT.read.properties;
+	sed "$data/d" -i %{configmgt}/admin.write.properties;
+	echo "$data" | sed 's/\\//g' >> %{configmgt}/DEFAULT.read.properties;
+	echo "$data" | sed 's/\\//g' >> %{configmgt}/admin.write.properties;
+}
+
+function createArbo {
+	local arboToCreate=$1;
+	mkdir -p $arboToCreate && echo "Folder $arboToCreate created" || echo "Folder $arboToCreate is already exist";
+}
+
+createArbo "/data/logs/%{name}";
+createArbo "/etc/%{name}/config";
+createArbo "/data/output/%{name}/pdf";
+echo "Folders are created";
+
+set +x
+echo "Install "%{name}" version "%{version}" release "%{release} " on "$(date) >> /data/logs/%{name}/install.log;
+echo "Content :" >> /data/logs/%{name}/install.log;
+rpm -ql %{name} | awk '{print " "$0}' >> /data/logs/%{name}/install.log;
+
+echo "Setting permissions for pallet";
+chmod 777 /data/logs/%{name}
+chmod 666 /data/logs/%{name}/*.log
+chmod 777 /data/output/%{name}
+#modif droit pour les scripts
+chmod 777 /etc/%{name}/*.sh
+
+catResult=$(cat /etc/log-rfid-pallet/config/application.properties | grep "AUTO_VALIDATION")
+if [ -z $catResult ]
+	then
+	echo -e "\nAUTO_VALIDATION=false" >> /etc/log-rfid-pallet/config/application.properties
+fi
+
+catResult=$(cat /etc/log-rfid-pallet/config/application.properties | grep "AUTO_VALIDATION_TIMEOUT")
+if [ -z $catResult ]
+	then
+	echo -e "\nAUTO_VALIDATION_TIMEOUT=20000" >> /etc/log-rfid-pallet/config/application.properties
+fi
+
+sed '/\/sysinfo\/plugins\/pallet\//d'  -i %{fup_csv};
+echo '"6","pallet","pallet","ajax", "/sysinfo/plugins/pallet/show_configs.php", "auto"' >> %{fup_csv};
+echo "Plugin added to sysinfo";
+
+
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/application.properties";
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/log4j-pallet.properties";
+writeDataInConfigMgt "\/etc\/udev\/rules.d\/20-pallet-usb-serial.rules";
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/alert.properties";
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/scanner.properties";
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/profiles.properties";
+writeDataInConfigMgt "\/etc\/log-rfid-pallet\/config\/log4j-reader.properties";
+
+echo "" >> %{configmgt}/DEFAULT.read.properties;
+echo "" >> %{configmgt}/admin.write.properties;
+echo "Rights added to config-mgt";
+
+#config du crontab
+echo "start config crontab"
+sed '/\/etc\/log-rfid-pallet\//d'  -i /etc/crontab;
+echo "add cron every day"
+echo '10 3 * * * root /etc/log-rfid-pallet/generateAntennaAlert.sh' >> /etc/crontab
+
+echo "config crontad finished"
+
+echo "Copying icons"
+cp -f /thin_sys/profiles/vendor/.idesktop/icons/icon_pallet.png /home/vendor/.idesktop/icons/icon_pallet.png
+cp -f /thin_sys/profiles/vendor/.idesktop/pallet.lnk /home/vendor/.idesktop/pallet.lnk
+#restart idesk
+echo "Restarting idesk"
+ps aux  | grep idesk | grep vendor | grep -v grep | grep -v su | grep -v bash | awk  'BEGIN{FS=" ";} {print $2}' | xargs kill -9
+su - vendor -c "DISPLAY=:1 /usr/bin/idesk > /dev/null 2>&1" &
+
+echo %{name}" installed"

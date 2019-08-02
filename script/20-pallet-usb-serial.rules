@@ -1,0 +1,7 @@
+#udev rules for tunnel
+#set here the name of the com port used by the bar code reader
+#udevadm info -a -p /sys/class/tty/ttyUSB* to get the driver name
+
+#regle par driver
+#SUBSYSTEMS=="usb-serial" , DRIVERS=="pl2303" , MODE="0666"
+

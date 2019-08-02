@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project activeEnvironment="Default" name="pallet-ws-server" resourceRoot="${workspaceDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" defaultScriptLanguage="Groovy" id="4739deb1-0517-446c-8184-19ea591d6f58" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WsAuthSoap12Binding" type="wsdl" bindingName="{http://server.ws.rfid.log.decathlon.com}WsAuthSoap12Binding" soapVersion="1_2" anonymous="optional" definition="${projectDir}/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl" id="e82d4bcf-c2e7-4f5a-ae5f-420a53165ba9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/_work/projects/workspace/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl"><con:part><con:url>file:/C:/_work/projects/workspace/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax21="http://vo.server.ws.rfid.log.decathlon.com/xsd" xmlns:ns="http://server.ws.rfid.log.decathlon.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:complexType name="VoAuthGetOPE">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="firstName" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastName" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="responseCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:ax22="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:import namespace="http://vo.server.ws.rfid.log.decathlon.com/xsd"/>
+      <xs:element name="getOPE">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="user" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getOPEResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoAuthGetOPE"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getOPERequest">
+    <wsdl:part name="parameters" element="ns:getOPE"/>
+  </wsdl:message>
+  <wsdl:message name="getOPEResponse">
+    <wsdl:part name="parameters" element="ns:getOPEResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="WsAuthPortType">
+    <wsdl:operation name="getOPE">
+      <wsdl:input message="ns:getOPERequest" wsaw:Action="urn:getOPE"/>
+      <wsdl:output message="ns:getOPEResponse" wsaw:Action="urn:getOPEResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WsAuthSoap11Binding" type="ns:WsAuthPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getOPE">
+      <soap:operation soapAction="urn:getOPE" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsAuthSoap12Binding" type="ns:WsAuthPortType">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getOPE">
+      <soap12:operation soapAction="urn:getOPE" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsAuthHttpBinding" type="ns:WsAuthPortType">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="getOPE">
+      <http:operation location="WsAuth/getOPE"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getOPE"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getOPE"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WsAuth">
+    <wsdl:port name="WsAuthHttpSoap11Endpoint" binding="ns:WsAuthSoap11Binding">
+      <soap:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+    <wsdl:port name="WsAuthHttpSoap12Endpoint" binding="ns:WsAuthSoap12Binding">
+      <soap12:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+    <wsdl:port name="WsAuthHttpEndpoint" binding="ns:WsAuthHttpBinding">
+      <http:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://DBCOLC47:8088/WsAuth</con:endpoint><con:endpoint>http://DBCOLC47:8088/mockWsAuthSoap12Binding</con:endpoint><con:endpoint>http://localhost:8080/axis2/services/WsAuth</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:getOPE" name="getOPE" bindingOperationName="getOPE" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="0ab5164c-4362-4594-90db-ede1a4b830bb"><con:settings/><con:call name="Request 1" id="b7b0aa37-d8bc-47c2-a9cf-79a652fa2fe6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://cndkl02:8040/log-rfid-ws-server/services/WsAuth</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soap:Header/>
+   <soap:Body>
+      <ser:getOPE>
+         <!--Optional:-->
+         <ser:user>1234000</ser:user>
+         <!--Optional:-->
+         <ser:pwd>0000</ser:pwd>
+         <!--Optional:-->
+         <ser:library>NEWGES</ser:library>
+      </ser:getOPE>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getOPE"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WsAuthSoap11Binding" type="wsdl" bindingName="{http://server.ws.rfid.log.decathlon.com}WsAuthSoap11Binding" soapVersion="1_1" anonymous="optional" definition="${projectDir}/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl" id="525434f6-e05b-48ca-861c-409a13d025b1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootpart="${projectDir}/../log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl"><con:part><con:url>${projectDir}/../log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsAuth/META-INF/WsAuth.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax21="http://vo.server.ws.rfid.log.decathlon.com/xsd" xmlns:ns="http://server.ws.rfid.log.decathlon.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:complexType name="VoAuthGetOPE">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="firstName" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastName" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="responseCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:ax22="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:import namespace="http://vo.server.ws.rfid.log.decathlon.com/xsd"/>
+      <xs:element name="getOPE">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="user" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getOPEResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoAuthGetOPE"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getOPERequest">
+    <wsdl:part name="parameters" element="ns:getOPE"/>
+  </wsdl:message>
+  <wsdl:message name="getOPEResponse">
+    <wsdl:part name="parameters" element="ns:getOPEResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="WsAuthPortType">
+    <wsdl:operation name="getOPE">
+      <wsdl:input message="ns:getOPERequest" wsaw:Action="urn:getOPE"/>
+      <wsdl:output message="ns:getOPEResponse" wsaw:Action="urn:getOPEResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WsAuthSoap11Binding" type="ns:WsAuthPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getOPE">
+      <soap:operation soapAction="urn:getOPE" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsAuthSoap12Binding" type="ns:WsAuthPortType">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getOPE">
+      <soap12:operation soapAction="urn:getOPE" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsAuthHttpBinding" type="ns:WsAuthPortType">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="getOPE">
+      <http:operation location="WsAuth/getOPE"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getOPE"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getOPE"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WsAuth">
+    <wsdl:port name="WsAuthHttpSoap11Endpoint" binding="ns:WsAuthSoap11Binding">
+      <soap:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+    <wsdl:port name="WsAuthHttpSoap12Endpoint" binding="ns:WsAuthSoap12Binding">
+      <soap12:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+    <wsdl:port name="WsAuthHttpEndpoint" binding="ns:WsAuthHttpBinding">
+      <http:address location="http://localhost:8080/axis2/services/WsAuth"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/axis2/services/WsAuth</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:getOPE" name="getOPE" bindingOperationName="getOPE" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1a20ef46-6d0d-48a2-a1e8-73151caa6c51"><con:settings/><con:call name="Request 1" id="50cba315-763f-41f2-ad5a-baf6c76da31f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.110.24.11:8040/log-rfid-ws-server/services/WsAuth</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:getOPE>
+         <!--Optional:-->
+         <ser:user>1234000</ser:user>
+         <!--Optional:-->
+         <ser:pwd>0000</ser:pwd>
+         <!--Optional:-->
+         <ser:library>?</ser:library>
+      </ser:getOPE>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getOPE"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WsParcelDetailsSoap11Binding" type="wsdl" bindingName="{http://server.ws.rfid.log.decathlon.com}WsParcelDetailsSoap11Binding" soapVersion="1_1" anonymous="optional" definition="${projectDir}/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl" id="25fbb265-ea77-4a11-b491-93010b795173" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/_work/projects/workspace/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl"><con:part><con:url>file:/C:/_work/projects/workspace/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax21="http://vo.server.ws.rfid.log.decathlon.com/xsd" xmlns:ns="http://server.ws.rfid.log.decathlon.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:complexType name="VoAck">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="result" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoPalletContent">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="found" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="items" nillable="true" type="ax21:VoTruckItem"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoTruckItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ean" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="eanUlItem" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="family" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="item" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="model" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="qty" type="xs:int"/>
+          <xs:element minOccurs="0" name="size" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoParcelDetails">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="family" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="item" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="line" type="xs:int"/>
+          <xs:element minOccurs="0" name="model" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="parcel" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="qty" type="xs:int"/>
+          <xs:element minOccurs="0" name="size" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:ax22="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:import namespace="http://vo.server.ws.rfid.log.decathlon.com/xsd"/>
+      <xs:element name="sendPalletTags">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="uatNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="mastName" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="sgtin" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="gtin14" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ean13" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="antenna" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sendPalletTagsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoAck"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getColis">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="numColis" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getColisResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoPalletContent"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getPallet">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="uat" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getPalletResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoPalletContent"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getParcelDetails">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="parcel" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getParcelDetailsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax22:VoParcelDetails"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getParcelDetailsRequest">
+    <wsdl:part name="parameters" element="ns:getParcelDetails"/>
+  </wsdl:message>
+  <wsdl:message name="getParcelDetailsResponse">
+    <wsdl:part name="parameters" element="ns:getParcelDetailsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="getPalletRequest">
+    <wsdl:part name="parameters" element="ns:getPallet"/>
+  </wsdl:message>
+  <wsdl:message name="getPalletResponse">
+    <wsdl:part name="parameters" element="ns:getPalletResponse"/>
+  </wsdl:message>
+  <wsdl:message name="getColisRequest">
+    <wsdl:part name="parameters" element="ns:getColis"/>
+  </wsdl:message>
+  <wsdl:message name="getColisResponse">
+    <wsdl:part name="parameters" element="ns:getColisResponse"/>
+  </wsdl:message>
+  <wsdl:message name="sendPalletTagsRequest">
+    <wsdl:part name="parameters" element="ns:sendPalletTags"/>
+  </wsdl:message>
+  <wsdl:message name="sendPalletTagsResponse">
+    <wsdl:part name="parameters" element="ns:sendPalletTagsResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="WsParcelDetailsPortType">
+    <wsdl:operation name="getParcelDetails">
+      <wsdl:input message="ns:getParcelDetailsRequest" wsaw:Action="urn:getParcelDetails"/>
+      <wsdl:output message="ns:getParcelDetailsResponse" wsaw:Action="urn:getParcelDetailsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <wsdl:input message="ns:getPalletRequest" wsaw:Action="urn:getPallet"/>
+      <wsdl:output message="ns:getPalletResponse" wsaw:Action="urn:getPalletResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <wsdl:input message="ns:getColisRequest" wsaw:Action="urn:getColis"/>
+      <wsdl:output message="ns:getColisResponse" wsaw:Action="urn:getColisResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <wsdl:input message="ns:sendPalletTagsRequest" wsaw:Action="urn:sendPalletTags"/>
+      <wsdl:output message="ns:sendPalletTagsResponse" wsaw:Action="urn:sendPalletTagsResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WsParcelDetailsSoap11Binding" type="ns:WsParcelDetailsPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getParcelDetails">
+      <soap:operation soapAction="urn:getParcelDetails" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <soap:operation soapAction="urn:getPallet" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <soap:operation soapAction="urn:getColis" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <soap:operation soapAction="urn:sendPalletTags" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsParcelDetailsSoap12Binding" type="ns:WsParcelDetailsPortType">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getParcelDetails">
+      <soap12:operation soapAction="urn:getParcelDetails" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <soap12:operation soapAction="urn:getPallet" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <soap12:operation soapAction="urn:getColis" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <soap12:operation soapAction="urn:sendPalletTags" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsParcelDetailsHttpBinding" type="ns:WsParcelDetailsPortType">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="getParcelDetails">
+      <http:operation location="WsParcelDetails/getParcelDetails"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getParcelDetails"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getParcelDetails"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <http:operation location="WsParcelDetails/getPallet"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getPallet"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getPallet"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <http:operation location="WsParcelDetails/getColis"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getColis"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getColis"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <http:operation location="WsParcelDetails/sendPalletTags"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="sendPalletTags"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="sendPalletTags"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WsParcelDetails">
+    <wsdl:port name="WsParcelDetailsHttpSoap11Endpoint" binding="ns:WsParcelDetailsSoap11Binding">
+      <soap:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+    <wsdl:port name="WsParcelDetailsHttpSoap12Endpoint" binding="ns:WsParcelDetailsSoap12Binding">
+      <soap12:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+    <wsdl:port name="WsParcelDetailsHttpEndpoint" binding="ns:WsParcelDetailsHttpBinding">
+      <http:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://DBCOLC90:8088/mockWsParcelDetailsSoap11Binding</con:endpoint><con:endpoint>http://localhost:8080/axis2/services/WsParcelDetails</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:getColis" name="getColis" bindingOperationName="getColis" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="63d3972e-c9af-4cb6-b1ff-5a07a3dc7e3e"><con:settings/><con:call name="Request 1" id="2e013336-7443-433f-982f-32d976052c30"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://frdkl90:8090/log-rfid-ws-server/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:getColis>
+         <!--Optional:-->
+         <ser:numColis>11870706100672201</ser:numColis>
+         <!--Optional:-->
+         <ser:library>NEWGES11</ser:library>
+      </ser:getColis>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getColis"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:getPallet" name="getPallet" bindingOperationName="getPallet" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e35916ec-0a6c-4b7f-b12b-b8b30d0b6d28"><con:settings/><con:call name="Request 1" id="2dab4d04-f2b2-4a49-a2c9-853cdbe0cc4e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:10001/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:getPallet>
+         <!--Optional:-->
+         <ser:uat>014000632436530</ser:uat>
+         <!--Optional:-->
+         <ser:library>NEWGES11</ser:library>
+      </ser:getPallet>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getPallet"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:getParcelDetails" name="getParcelDetails" bindingOperationName="getParcelDetails" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f63e9a23-f289-49e5-970e-dccb2bc071e6"><con:settings/><con:call name="Request 1" id="63f0f988-7e79-4ce7-86d9-e88ac233ae92"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/log-rfid-ws-server/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:getParcelDetails>
+         <!--Optional:-->
+         <ser:parcel>861000001288517</ser:parcel>
+         <!--Optional:-->
+         <ser:library>NEWGES11</ser:library>
+      </ser:getParcelDetails>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getParcelDetails"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:sendPalletTags" name="sendPalletTags" bindingOperationName="sendPalletTags" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="61ca06fe-b428-44f8-93e3-c69cd16a73c0"><con:settings/><con:call name="Request 1" id="69c0870e-a9f8-4f72-a642-50c32ee2ba90"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/axis2/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:sendPalletTags>
+         <!--Optional:-->
+         <ser:uatNumber>?</ser:uatNumber>
+         <!--Optional:-->
+         <ser:mastName>?</ser:mastName>
+         <!--Zero or more repetitions:-->
+         <ser:sgtin>?</ser:sgtin>
+         <!--Zero or more repetitions:-->
+         <ser:gtin14>?</ser:gtin14>
+         <!--Zero or more repetitions:-->
+         <ser:ean13>?</ser:ean13>
+         <!--Zero or more repetitions:-->
+         <ser:antenna>?</ser:antenna>
+         <!--Optional:-->
+         <ser:library>?</ser:library>
+      </ser:sendPalletTags>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:sendPalletTags"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WsParcelDetailsSoap12Binding" type="wsdl" bindingName="{http://server.ws.rfid.log.decathlon.com}WsParcelDetailsSoap12Binding" soapVersion="1_2" anonymous="optional" definition="${projectDir}/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl" id="ea401b4a-503d-4fa7-b885-9e501d6bf63e" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/@dev/RFID/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl"><con:part><con:url>file:/C:/@dev/RFID/log-rfid-tool/../log-rfid-ws-server/log-rfid-ws-server/src/main/webapp/WEB-INF/services/WsParcelDetails/META-INF/WsParcelDetails.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax21="http://vo.server.ws.rfid.log.decathlon.com/xsd" xmlns:ns="http://server.ws.rfid.log.decathlon.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:complexType name="VoAck">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="result" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoPalletContent">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="found" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="items" nillable="true" type="ax21:VoTruckItem"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoTruckItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ean" nillable="true" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="eanUlItem" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="family" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="item" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="model" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="qty" type="xs:int"/>
+          <xs:element minOccurs="0" name="size" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="VoParcelDetails">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="family" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="item" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="line" type="xs:int"/>
+          <xs:element minOccurs="0" name="model" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="parcel" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="qty" type="xs:int"/>
+          <xs:element minOccurs="0" name="size" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://server.ws.rfid.log.decathlon.com" xmlns:ax22="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+      <xs:import namespace="http://vo.server.ws.rfid.log.decathlon.com/xsd"/>
+      <xs:element name="sendPalletTags">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="uatNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="mastName" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="sgtin" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="gtin14" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ean13" nillable="true" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="antenna" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sendPalletTagsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoAck"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getColis">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="numColis" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getColisResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoPalletContent"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getPallet">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="uat" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getPalletResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="ax22:VoPalletContent"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getParcelDetails">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="parcel" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="library" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getParcelDetailsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax22:VoParcelDetails"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getParcelDetailsRequest">
+    <wsdl:part name="parameters" element="ns:getParcelDetails"/>
+  </wsdl:message>
+  <wsdl:message name="getParcelDetailsResponse">
+    <wsdl:part name="parameters" element="ns:getParcelDetailsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="getPalletRequest">
+    <wsdl:part name="parameters" element="ns:getPallet"/>
+  </wsdl:message>
+  <wsdl:message name="getPalletResponse">
+    <wsdl:part name="parameters" element="ns:getPalletResponse"/>
+  </wsdl:message>
+  <wsdl:message name="getColisRequest">
+    <wsdl:part name="parameters" element="ns:getColis"/>
+  </wsdl:message>
+  <wsdl:message name="getColisResponse">
+    <wsdl:part name="parameters" element="ns:getColisResponse"/>
+  </wsdl:message>
+  <wsdl:message name="sendPalletTagsRequest">
+    <wsdl:part name="parameters" element="ns:sendPalletTags"/>
+  </wsdl:message>
+  <wsdl:message name="sendPalletTagsResponse">
+    <wsdl:part name="parameters" element="ns:sendPalletTagsResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="WsParcelDetailsPortType">
+    <wsdl:operation name="getParcelDetails">
+      <wsdl:input message="ns:getParcelDetailsRequest" wsaw:Action="urn:getParcelDetails"/>
+      <wsdl:output message="ns:getParcelDetailsResponse" wsaw:Action="urn:getParcelDetailsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <wsdl:input message="ns:getPalletRequest" wsaw:Action="urn:getPallet"/>
+      <wsdl:output message="ns:getPalletResponse" wsaw:Action="urn:getPalletResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <wsdl:input message="ns:getColisRequest" wsaw:Action="urn:getColis"/>
+      <wsdl:output message="ns:getColisResponse" wsaw:Action="urn:getColisResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <wsdl:input message="ns:sendPalletTagsRequest" wsaw:Action="urn:sendPalletTags"/>
+      <wsdl:output message="ns:sendPalletTagsResponse" wsaw:Action="urn:sendPalletTagsResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WsParcelDetailsSoap11Binding" type="ns:WsParcelDetailsPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getParcelDetails">
+      <soap:operation soapAction="urn:getParcelDetails" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <soap:operation soapAction="urn:getPallet" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <soap:operation soapAction="urn:getColis" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <soap:operation soapAction="urn:sendPalletTags" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsParcelDetailsSoap12Binding" type="ns:WsParcelDetailsPortType">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getParcelDetails">
+      <soap12:operation soapAction="urn:getParcelDetails" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <soap12:operation soapAction="urn:getPallet" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <soap12:operation soapAction="urn:getColis" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <soap12:operation soapAction="urn:sendPalletTags" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WsParcelDetailsHttpBinding" type="ns:WsParcelDetailsPortType">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="getParcelDetails">
+      <http:operation location="WsParcelDetails/getParcelDetails"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getParcelDetails"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getParcelDetails"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPallet">
+      <http:operation location="WsParcelDetails/getPallet"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getPallet"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getPallet"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColis">
+      <http:operation location="WsParcelDetails/getColis"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="getColis"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="getColis"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendPalletTags">
+      <http:operation location="WsParcelDetails/sendPalletTags"/>
+      <wsdl:input>
+        <mime:content type="text/xml" part="sendPalletTags"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content type="text/xml" part="sendPalletTags"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WsParcelDetails">
+    <wsdl:port name="WsParcelDetailsHttpSoap11Endpoint" binding="ns:WsParcelDetailsSoap11Binding">
+      <soap:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+    <wsdl:port name="WsParcelDetailsHttpSoap12Endpoint" binding="ns:WsParcelDetailsSoap12Binding">
+      <soap12:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+    <wsdl:port name="WsParcelDetailsHttpEndpoint" binding="ns:WsParcelDetailsHttpBinding">
+      <http:address location="http://localhost:8080/axis2/services/WsParcelDetails"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/axis2/services/WsParcelDetails</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:getColis" name="getColis" bindingOperationName="getColis" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c05552a5-7352-42ed-8814-17b1b3899481"><con:settings/><con:call name="Request 1" id="9ae67445-7603-490f-abed-a965fd18542b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://frdkl11:8040/log-rfid-ws-server/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soap:Header/>
+   <soap:Body>
+      <ser:getColis>
+         <!--Optional:-->
+         <ser:numColis>140006325296000</ser:numColis>
+         <!--Optional:-->
+         <ser:library>NEWGES</ser:library>
+      </ser:getColis>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getColis"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:getPallet" name="getPallet" bindingOperationName="getPallet" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a64dfcb8-a326-4b78-b259-7141737e1964"><con:settings/><con:call name="Request 1" id="ca28cb40-3bf4-4418-a49b-9d3e14eb23e3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esdkl02:8040/log-rfid-ws-server/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soap:Header/>
+   <soap:Body>
+      <ser:getPallet>
+         <!--Optional:-->
+         <ser:uat>014003101028283</ser:uat>
+         <!--Optional:-->
+         <ser:library>NEWGES</ser:library>
+      </ser:getPallet>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getPallet"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:getParcelDetails" name="getParcelDetails" bindingOperationName="getParcelDetails" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f04ef2e5-fe54-4984-9c13-37e1a4ee901f"><con:settings/><con:call name="Request 1" id="d6c7ba4b-823c-48ba-9db4-2ab6cdd0858f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://frdkl37:8040/log-rfid-ws-server/services/WsParcelDetails</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soap:Header/>
+   <soap:Body>
+      <ser:getParcelDetails>
+         <!--Optional:-->
+         <ser:parcel>698614000067488</ser:parcel>
+         <!--Optional:-->
+         <ser:library>NEWGES95</ser:library>
+      </ser:getParcelDetails>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getParcelDetails"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="urn:sendPalletTags" name="sendPalletTags" bindingOperationName="sendPalletTags" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f87fd432-5cf8-4b8f-bdb1-f546b3bb67fd"><con:settings/><con:call name="Request 1" id="0e3dff3c-9c44-4e8b-a08f-5113996f4a8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://frdkl90:8090/log-rfid-ws-server/services//WsParcelDetails</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+   <soap:Header/>
+   <soap:Body>
+      <ser:sendPalletTags>
+         <!--Optional:-->
+         <ser:uatNumber>014000632436530</ser:uatNumber>
+         <!--Optional:-->
+         <ser:mastName>DBCWNMF01</ser:mastName>
+         <!--Zero or more repetitions:-->
+         <ser:sgtin>30395DFA805BF14000000117|30395DFA8106CA0000000003|30395DFA812A060000000468|END|</ser:sgtin>
+         <!--Zero or more repetitions:-->
+         <ser:gtin14>03583780941499|03583782690968|03583783051768|END|</ser:gtin14>
+         <!--Zero or more repetitions:-->
+         <ser:ean13>3583780941499|3583782690968|3608429904205|3583783051768|END|</ser:ean13>
+         <!--Zero or more repetitions:-->
+         <ser:antenna>1|2|3|END</ser:antenna>
+         <!--Optional:-->
+         <ser:library>NEWGES11</ser:library>
+      </ser:sendPalletTags>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:sendPalletTags"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:mockService port="10001" path="/" host="localhost" name="PalletEanMatchingMockService" bindToHostOnly="false" docroot="" id="5579754c-734b-4b77-b46c-a8e077892955"><con:description>Créer pour l'évolution de la pallette RFID-268.
+Meilleur gestion de la correspondance Ean lus et Ean théoriques</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:properties/><con:mockOperation name="getPallet" id="92875313-d39a-4c4c-8261-7ba99c14a229" interface="WsParcelDetailsSoap11Binding" operation="getPallet"><con:settings/><con:defaultResponse>Response 1</con:defaultResponse><con:dispatchStyle>SCRIPT</con:dispatchStyle><con:response name="Response 1" id="7c284096-79dc-4b93-ba40-6d2b1e00e05f" httpResponseStatus="200" encoding="UTF-8"><con:settings/><con:script>def timeout = 5000
+Thread.sleep(timeout)</con:script><con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ser:getPalletResponse xmlns:ser="http://server.ws.rfid.log.decathlon.com">
+			<ser:return>
+				<xsd:found xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">true</xsd:found>
+				<!-- Cas : Ean trouvé dans eanUlItem -->
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<xsd:ean>7330033224344</xsd:ean>
+					<xsd:eanUlItem>2112135792021</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>1213579</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<xsd:ean>3608245558460</xsd:ean>
+               		<xsd:eanUlItem>2120954102013</xsd:eanUlItem>
+               		<xsd:eanUlItem>2120954102020</xsd:eanUlItem>
+               		<!-- C'est le bon 3608439718519 -->
+               		<!-- EPC asscoié 30396062C3B512C0001A8101, 30396062C3B512C0001A843C, 30396062C3B512C0001A843A -->
+               		<xsd:eanUlItem>3608439718519</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>1234567</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<!-- Cas : Ean trouvé directement -->
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<!-- 30396061C3C7E5400018B92B -->
+					<xsd:ean>3608399911258</xsd:ean>
+					<xsd:eanUlItem>2120954102013</xsd:eanUlItem>
+               		<xsd:eanUlItem>2120954102020</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>9876543</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<!-- Cas : Ean non trouvé mais commence par 21x
+				On extrait alors le code article de 3 à 9 digit -->
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<!-- 3038CF3D83037C0000000040 -->
+					<xsd:ean>2122147900000</xsd:ean>
+					<xsd:eanUlItem>2120954102013</xsd:eanUlItem>
+               		<xsd:eanUlItem>2120954102020</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>2214790</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<!-- Cas : Ean non trouvé mais commence par 200x
+				On extrait alors le code article de 4 à 9 digit -->
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<xsd:ean>2002147900000</xsd:ean>
+					<xsd:eanUlItem>2120954102013</xsd:eanUlItem>
+               		<xsd:eanUlItem>2120954102020</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>221479</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<!-- Cas : Ean non trouvé mais correspondance avec le code article
+				On extrait alors le code article de 4 à 9 digit -->
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<xsd:ean>0000000000001</xsd:ean>
+					<xsd:eanUlItem>0000000000002</xsd:eanUlItem>
+               		<xsd:eanUlItem>0000000000003</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>1234567</xsd:item>
+					<xsd:model>TEST</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+				<xsd:items xmlns:xsd="http://vo.server.ws.rfid.log.decathlon.com/xsd">
+					<xsd:ean>2111178540002</xsd:ean>
+					<xsd:eanUlItem>2111178540003</xsd:eanUlItem>
+               		<xsd:eanUlItem>2111178540004</xsd:eanUlItem>
+					<xsd:family>TEST</xsd:family>
+					<xsd:item>1117854</xsd:item>
+					<xsd:model>SVT TOILE NOIR PUMA BTS 09</xsd:model>
+					<xsd:size>XXL</xsd:size>
+					<xsd:qty>1</xsd:qty>
+				</xsd:items>
+			</ser:return>
+		</ser:getPalletResponse>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:getPalletResponse"/></con:response><con:dispatchConfig/></con:mockOperation></con:mockService><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

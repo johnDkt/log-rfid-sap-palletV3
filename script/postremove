@@ -1,0 +1,31 @@
+res=`rpm -qa %{name} | wc -l`
+if [ $res -eq 1 ];
+then
+
+	#recherche si le package est bien installé
+	sed '/\/sysinfo\/plugins\/pallet\//d'  -i %{fup_csv};
+	echo "Plugin pallet is removed from sysinfo";
+
+	sed '/log-rfid-pallet\//d'  -i %{configmgt}/DEFAULT.read.properties;
+	sed '/log-rfid-pallet\//d'  -i %{configmgt}/admin.write.properties;
+	echo "Rights are removed from config-mgt";
+
+	rm -f /home/vendor/.idesktop/icons/icon_pallet.png
+	rm -f /home/vendor/.idesktop/pallet.lnk
+	echo "Icons are remvoed from the folder '.idesktop'";
+
+	#restart idesk
+	ps aux  | grep idesk | grep vendor | grep -v grep | grep -v su | grep -v bash | awk  'BEGIN{FS=" ";} {print $2}' | xargs kill -9
+	su - vendor -c "DISPLAY=:1 /usr/bin/idesk > /dev/null 2>&1" &
+	echo "Desktop is refreshed";
+
+	#remettre dans un etat initial le crontab
+	mv /etc/crontab /etc/crontab.ori
+	cat /etc/crontab.ori | grep -v log-rfid-pallet > /etc/crontab
+	/etc/init.d/crond restart
+	rm -f /etc/crontab.ori
+	echo "Cron configuration is removed";
+
+fi
+	
+echo %{name}" uninstalled"
