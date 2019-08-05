@@ -1,9 +1,15 @@
 package com.decathlon.log.rfid.pallet.scan.task;
 
+import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
+import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
-import com.decathlon.log.rfid.pallet.service.ScannerService;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Task;
+
+import java.io.IOException;
 
 
 public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
@@ -11,7 +17,7 @@ public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
 
     private int timeout;
 
-    private ScannerService scannerService;
+    private RFIDConnectConnector RFIDConnectInstance;
 
     /**
      * Constructor.
@@ -21,7 +27,11 @@ public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
     public StartPanelCommandButtonsActionTask(int timeout) {
         super(RFIDPalletApp.getApplication());
         this.timeout = timeout;
-        this.scannerService = ScannerService.getInstance();
+        try {
+            this.RFIDConnectInstance = RFIDConnectConnectorFactoryList.getInstance();
+        } catch (IOException e) {
+            LOGGER.error(e);
+        }
     }
 
     /**
@@ -29,10 +39,13 @@ public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
      */
     @Override
     protected Object doInBackground() throws Exception {
-        LOGGER.debug("START NEW READ");
-        LOGGER.debug("READ timeout = " + timeout);
-        scannerService.getBoScanner().startNewRead(timeout, true);
-        LOGGER.debug("END NEW READ");
+
+        if(Utils.isNotNull(RFIDConnectInstance)){
+            LOGGER.debug("START NEW READ");
+            RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.START_CONTINUOUS_READ));
+        }else{
+            LOGGER.warn("RFIDConnectInstance was null");
+        }
         return null;
     }
 

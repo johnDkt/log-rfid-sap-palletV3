@@ -77,20 +77,16 @@ public class ItemForTableData implements Comparable<ItemForTableData> {
 
     @Override
     public int compareTo(ItemForTableData o) {
-        System.out.println("start compareTo");
         int oPercentRatio = (o.getQtyRead()*100) / o.getQtyExpected();
         int thisPercentRatio = (this.getQtyRead()*100) / this.getQtyExpected();
 
 
         if (oPercentRatio > thisPercentRatio){
-            System.out.println(o.getDescription()+ " > "+this.getDescription());
             return -1;
         }
         if(oPercentRatio < thisPercentRatio){
-            System.out.println(o.getDescription()+ " < "+this.getDescription());
             return 1;
         }
-        System.out.println(o.getDescription()+ " = "+this.getDescription());
         return 0;
     }
 }

@@ -136,10 +136,6 @@ public class RFIDProperties {
          */
         READ_SYSTEM_IN("READ_SYSTEM_IN"),
 
-        READER_TYPE("READER_TYPE"),
-
-        SGTIN_DECODER_TYPE("SGTIN_DECODER_TYPE"),
-
         AS400_LIBRARY("AS400_LIBRARY"),
 
         OUTPUT_DATA_DIR("OUTPUT_DATA_DIR"),

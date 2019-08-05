@@ -21,7 +21,7 @@ public class ItemTableCellRenderer extends DefaultTableCellRenderer {
         if(column == 1 && row == 0) {
             final ItemForTableData item = ((ItemTableModel)table.getModel()).getExpectedAndDisplayedItems().get(row);
             ItemProgressPanel progressPanel = new ItemProgressPanel();
-            progressPanel.setBackground(Color.BLUE);
+            progressPanel.setBackground(Color.LIGHT_GRAY);
             progressPanel.setOpaque(true);
             progressPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             progressPanel.setTotal(item.getQtyExpected());

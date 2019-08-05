@@ -1,5 +1,11 @@
 package com.decathlon.log.rfid.pallet.main;
 
+import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
+import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
+import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.keyboard.bean.VirtualKeyBoardConfig;
 import com.decathlon.log.rfid.keyboard.loader.VirtualKeyBoardLayoutType;
 import com.decathlon.log.rfid.keyboard.ui.board.VirtualKeyBoard;
@@ -7,12 +13,12 @@ import com.decathlon.log.rfid.keyboard.ui.textfield.EditableTextField;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.ui.glassPane.DarkGlassPane;
 import com.decathlon.log.rfid.pallet.ui.panel.ShutdownJDialog;
-import com.decathlon.log.rfid.pallet.service.ScannerService;
-import com.decathlon.log.rfid.pallet.service.SgtinService;
+import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.LoggerImpl;
+import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.PalletDefaultEventPropagator;
 import com.decathlon.log.rfid.pallet.utils.RFIDProperties;
-import com.decathlon.log.rfid.reader.bo.BoScanner;
 import lombok.extern.log4j.Log4j;
 import net.miginfocom.swing.MigLayout;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -21,6 +27,7 @@ import org.jdesktop.application.TaskService;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -28,6 +35,7 @@ import java.util.concurrent.Executors;
 
 @Log4j
 public class RFIDPalletApp extends SingleFrameApplication {
+    private static final Logger LOGGER = Logger.getLogger(RFIDPalletApp.class);
     public static final int APPLICATION_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int APPLICATION_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final String TASK_SERVICE_NAME = "RfidPalletTaskService";
@@ -62,10 +70,15 @@ public class RFIDPalletApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         final Properties log = new Properties();
-        log.load(ClassLoader.getSystemResourceAsStream("log4j-pallet.properties"));
-        PropertyConfigurator.configure(log);
-
-        launch(RFIDPalletApp.class, args);
+        String propertiesFileName = "log4j-pallet.properties";
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream(propertiesFileName);
+        if(null != inputStream){
+            log.load(inputStream);
+            PropertyConfigurator.configure(log);
+            launch(RFIDPalletApp.class, args);
+        }else{
+            LOGGER.error("impossible to read "+propertiesFileName);
+        }
     }
 
     @Override
@@ -74,8 +87,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
         log.warn("Screen size = " + APPLICATION_WIDTH + " x " + APPLICATION_HEIGHT);
 
         initTaskService();
-        initSgtinService();
-        initScannerService();
+        initConnectJava();
         initResourceManager();
 
         final JFrame jFrame = getMainFrame();
@@ -83,6 +95,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
         jFrame.setAlwaysOnTop(true);
         jFrame.setUndecorated(true);
         jFrame.setLocationByPlatform(true);
+        jFrame.setUndecorated(Utils.isInDevMode() ? false : true);
 
         jFrame.setGlassPane(getDarkGlassPane());
 
@@ -94,7 +107,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
         hideVirtualKeyBoard();
 
         jFrame.pack();
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(jFrame);
+        //GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(jFrame);
         show(jFrame);
 
         getView().showParamPanel();
@@ -128,36 +141,26 @@ public class RFIDPalletApp extends SingleFrameApplication {
         }
     }
 
-    private void initScannerService() {
-        try {
-            ScannerService.getInstance().initScanner();
-            log.debug("Enabled scanner service");
-        } catch (final Exception e) {
-            log.fatal("Impossible to initialize RFID scanner : check parameters", e);
+    private void initConnectJava() {
+
+        RFIDConnectConnector RFIDConnectInstance = new ConnectJavaIntegratorHelper(new LoggerImpl())
+                .addListener(this.getClass().toString(), new PalletDefaultEventPropagator())
+                .removeDefautlListener()
+                .returnInstance();
+
+        if(Utils.isNotNull(RFIDConnectInstance)){
+            RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
+        }else{
+            LOGGER.error("RFIDConnect instance is null");
         }
     }
 
-    private void initSgtinService() {
-        try {
-            SgtinService.getInstance().initSgtinDecoderAndGetter();
-            log.debug("Enabled sgtin service");
-        } catch (final Exception e) {
-            log.fatal("Impossible to initialize sgtin service (decoder and getter) : check parameters", e);
-        }
-    }
 
     private void initResourceManager() {
         ResourceManager.getInstance(new Locale(RFIDProperties.getValue(RFIDProperties.PROPERTIES.LANGUAGE)));
     }
 
     public void exitApplication() {
-        try {
-            Runtime.getRuntime().exec("sudo /sbin/poweroff");
-        } catch (final Exception e) {
-            log.error("Unable to perform sudo /sbin/poweroff command: exception", e);
-        } catch (final Error e) {
-            log.error("Unable to perform sudo /sbin/poweroff command: error", e);
-        }
         this.exit();
     }
 
@@ -168,7 +171,6 @@ public class RFIDPalletApp extends SingleFrameApplication {
                 getShutDownJDialog().setVisible(true);
             }
         });
-
     }
 
     public VirtualKeyBoard getVirtualKeyBoard() {
@@ -210,40 +212,19 @@ public class RFIDPalletApp extends SingleFrameApplication {
     @Override
     protected void shutdown() {
         // override default shutdown policy which stores window's bounds and components size.
-        super.shutdown();
-
-        final BoScanner scanner = ScannerService.getInstance().getBoScanner();
-        if (scanner != null) {
-            log.debug("call stop()");
-            boolean res = false;
-
-            try {
-                res = scanner.stop();
-            } catch (Exception e) {
-                log.error("error while stopping scanner.", e);
-            }
-            if (res) {
-                log.debug("scanner stopped.");
-            }
-
-            log.debug("call disconnect()");
-            try {
-                res = scanner.disconnect();
-            } catch (Exception e) {
-                log.error("error while disconnecting scanner.", e);
-            }
-
-            if (res) {
-                log.debug("scanner disconnected.");
-            } else {
-                log.error("error while stopping scanner.");
-                JOptionPane.showMessageDialog(this.getMainFrame(),
-                        ResourceManager.getInstance().getString("app.shutdown.error"),
-                        ResourceManager.getInstance().getString("app.shutdown.error.title"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
+        try{
+            super.shutdown();
+            RFIDConnectConnectorFactoryList.getInstance()
+                    .sendCommandThrows(
+                            ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.DISCONNECT_DEVICE)
+                    );
+        }catch(Exception e){
+            log.error("error while stopping scanner.",e);
+            JOptionPane.showMessageDialog(this.getMainFrame(),
+                    ResourceManager.getInstance().getString("app.shutdown.error"),
+                    ResourceManager.getInstance().getString("app.shutdown.error.title"),
+                    JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     /**

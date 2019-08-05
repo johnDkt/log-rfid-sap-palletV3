@@ -1,5 +1,10 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
+import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
+import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
+import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
@@ -9,7 +14,6 @@ import com.decathlon.log.rfid.pallet.scan.reader.TagsListener;
 import com.decathlon.log.rfid.pallet.scan.task.PlayTask;
 import com.decathlon.log.rfid.pallet.scan.task.SaveDetailsTask;
 import com.decathlon.log.rfid.pallet.scan.task.StartPanelCommandButtonsActionTask;
-import com.decathlon.log.rfid.pallet.service.ScannerService;
 import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.service.TaskManagerService;
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
@@ -36,6 +40,8 @@ import java.util.TimerTask;
 
 @Log4j
 public class ScanPanelLight extends JPanel {
+
+    private static final Logger LOGGER = Logger.getLogger(ScanPanelLight.class);
 
     private static ActionMap actionMap;
 
@@ -68,13 +74,17 @@ public class ScanPanelLight extends JPanel {
 
     private TaskManagerService taskManagerService;
     private SessionService sessionService;
-    private ScannerService scannerService;
+    private RFIDConnectConnector RFIDConnectInstance;
 
     public ScanPanelLight() {
         super();
         this.setSize(1024,768);
         this.sessionService = SessionService.getInstance();
-        this.scannerService = ScannerService.getInstance();
+        try {
+            this.RFIDConnectInstance = RFIDConnectConnectorFactoryList.getInstance();
+        } catch (IOException e) {
+            LOGGER.error(e);
+        }
         this.taskManagerService = TaskManagerService.getInstance();
         initTagsListenerAndTagsHandler();
         initialize();
@@ -123,6 +133,7 @@ public class ScanPanelLight extends JPanel {
             public void updateUIWhenTagRead(final TdoItem tdoItem) {
                 final ItemsTable table = allItems.getItemsTable();
                 table.addData(tdoItem);
+
                 int expected = table.getExpectedTagCount();
                 int read = table.getReadTagCount();
                 updateQtyUI(read, expected);
@@ -130,7 +141,10 @@ public class ScanPanelLight extends JPanel {
         };
 
         tagsListener = new TagsListener(tagsHandler);
-        scannerService.setTagsListener(tagsListener);
+
+        new ConnectJavaIntegratorHelper()
+                .addListener(TagsListener.class.toString(),tagsListener)
+                .removeListener(RFIDPalletApp.class.toString());
     }
 
     @Override
@@ -364,26 +378,22 @@ public class ScanPanelLight extends JPanel {
         itemsTable.setTheoreticalTags(theoreticalTags); //theoreticalTags = la liste des tdo items récup du WS(GE)
         final int expected = itemsTable.getExpectedTagCount();
         final int read = itemsTable.getReadTagCount();
-        //updateQtyUI(expected, read );
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateQtyUI(read, expected);
-            }
-        });
-
+        updateQtyUI(read, expected);
     }
 
     public void startScanner() {
-        log.debug("Clean table");
+        /*log.debug("Clean table");
         final ItemsTable itemsTable = allItems.getItemsTable();
-        itemsTable.clear();
+        itemsTable.clear();*/
 
         log.debug("startStopScanner - Begin");
 
         this.playTask = new PlayTask(getPlayLabel());
-        this.scannerService.getTagsListener().clearTags();
-
+        TagsListener clientListenerImpl = (TagsListener) RFIDConnectConnectorFactoryList.getListenerfrom(TagsListener.class);
+        clientListenerImpl.clearTags();
+        /*ConnectCommandToReceiveList receiveList = (ConnectCommandToReceiveList) this.RFIDConnectInstance.getListenerInstance();
+        ((TagsListener)receiveList.listeners.get(TagsListener.class.toString())).clearTags();
+*/
         startReading();
 
         timerReadPallet = new Timer("Timer-Read-Pallet");
@@ -460,7 +470,11 @@ public class ScanPanelLight extends JPanel {
         this.playTask.stop();
         this.timerReadPallet.cancel();
 
-        scannerService.getBoScanner().stop();
+        try {
+            RFIDConnectConnectorFactoryList.getInstance().sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
