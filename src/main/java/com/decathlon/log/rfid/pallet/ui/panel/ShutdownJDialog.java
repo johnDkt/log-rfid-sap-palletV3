@@ -78,7 +78,7 @@ public class ShutdownJDialog extends JDialog {
 
     @org.jdesktop.application.Action(taskService = "RfidPalletTaskService")
     public void unconfirmShutDownAction() {
-        RFIDPalletApp.getApplication().exit();
+        this.setVisible(false);
     }
 
     @org.jdesktop.application.Action(taskService = "RfidPalletTaskService")
