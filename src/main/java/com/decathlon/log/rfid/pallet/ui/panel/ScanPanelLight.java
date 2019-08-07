@@ -391,9 +391,6 @@ public class ScanPanelLight extends JPanel {
         this.playTask = new PlayTask(getPlayLabel());
         TagsListener clientListenerImpl = (TagsListener) RFIDConnectConnectorFactoryList.getListenerfrom(TagsListener.class);
         clientListenerImpl.clearTags();
-        /*ConnectCommandToReceiveList receiveList = (ConnectCommandToReceiveList) this.RFIDConnectInstance.getListenerInstance();
-        ((TagsListener)receiveList.listeners.get(TagsListener.class.toString())).clearTags();
-*/
         startReading();
 
         timerReadPallet = new Timer("Timer-Read-Pallet");

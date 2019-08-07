@@ -12,6 +12,7 @@ import com.decathlon.log.rfid.keyboard.ui.board.VirtualKeyBoard;
 import com.decathlon.log.rfid.keyboard.ui.textfield.EditableTextField;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.ui.glassPane.DarkGlassPane;
+import com.decathlon.log.rfid.pallet.ui.panel.ConnectJavaCheckDialog;
 import com.decathlon.log.rfid.pallet.ui.panel.ShutdownJDialog;
 import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.LoggerImpl;
 import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.PalletDefaultEventPropagator;
@@ -42,9 +43,12 @@ public class RFIDPalletApp extends SingleFrameApplication {
     private static RFIDPalletMainPanel view;
 
     private ShutdownJDialog shutDownJDialog;
+    private ConnectJavaCheckDialog connectJavaCheckDialog;
     private VirtualKeyBoard virtualKeyBoard;
 
     private DarkGlassPane darkGlassPane;
+
+    public static Boolean isReading = false;
 
     public static RFIDPalletMainPanel getView() {
         if (view == null) {
@@ -122,6 +126,15 @@ public class RFIDPalletApp extends SingleFrameApplication {
         return shutDownJDialog;
     }
 
+    private ConnectJavaCheckDialog getConnectJavaCheckJDialog() {
+        if (connectJavaCheckDialog == null) {
+            connectJavaCheckDialog = new ConnectJavaCheckDialog(getMainFrame());
+            connectJavaCheckDialog.setSize(900, 600);
+            connectJavaCheckDialog.setLocationRelativeTo(null);
+        }
+        return connectJavaCheckDialog;
+    }
+
     private DarkGlassPane getDarkGlassPane() {
         if (darkGlassPane == null) {
             darkGlassPane = new DarkGlassPane();
@@ -152,6 +165,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
             RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
         }else{
             LOGGER.error("RFIDConnect instance is null");
+            showConnectJavaCheckDialog();
         }
     }
 
@@ -169,6 +183,15 @@ public class RFIDPalletApp extends SingleFrameApplication {
             @Override
             public void run() {
                 getShutDownJDialog().setVisible(true);
+            }
+        });
+    }
+
+    public void showConnectJavaCheckDialog() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                getConnectJavaCheckJDialog().setVisible(true);
             }
         });
     }
