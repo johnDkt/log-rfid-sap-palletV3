@@ -97,6 +97,7 @@ public class ConnectJavaCheckDialog extends JDialog {
         retryButton.setEnabled(false);
         new Thread(new Runnable() {
             public void run() {
+                mainPanel.updateUI();
                 checkRFIDConnectJavaStatus();
                 retryButton.setEnabled(true);
             }

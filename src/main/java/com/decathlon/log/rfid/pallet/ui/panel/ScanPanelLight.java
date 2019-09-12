@@ -5,6 +5,7 @@ import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryLi
 import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
@@ -467,10 +468,13 @@ public class ScanPanelLight extends JPanel {
         this.playTask.stop();
         this.timerReadPallet.cancel();
 
-        try {
-            RFIDConnectConnectorFactoryList.getInstance().sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(Utils.isNotNull(RFIDPalletApp.RFIDConnectJavaInstance)){
+            try {
+                SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE,false);
+                RFIDPalletApp.RFIDConnectJavaInstance.sendCommandThrows(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
+            } catch (Exception e) {
+                log.error(e);
+            }
         }
 
         SwingUtilities.invokeLater(new Runnable() {

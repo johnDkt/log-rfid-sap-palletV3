@@ -11,7 +11,6 @@ public class PalletDefaultEventPropagator extends AbstractDefaultPropagatorListe
 
     final static Logger logger = Logger.getLogger(PalletDefaultEventPropagator.class);
 
-
     public Boolean isConnected(Boolean pBoolValue) {
         if(pBoolValue){
             logger.debug("connect command succeed, "+ConnectCmdKey.deviceName+" connected");
@@ -34,5 +33,14 @@ public class PalletDefaultEventPropagator extends AbstractDefaultPropagatorListe
 
     public void error(String error) {
         logger.debug("error = " + error);
+        /*
+        String errorMessage = Utils.getOnlyStrings(error);
+        if(!("").equals(errorMessage)){
+            JOptionPane.showMessageDialog(RFIDPalletApp.getApplication().getMainView().getFrame(),
+                    Utils.getOnlyStrings(error),
+                    "RFID error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        */
     }
 }

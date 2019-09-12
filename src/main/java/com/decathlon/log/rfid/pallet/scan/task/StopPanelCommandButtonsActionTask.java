@@ -1,6 +1,5 @@
 package com.decathlon.log.rfid.pallet.scan.task;
 
-import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
 import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
@@ -9,8 +8,6 @@ import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Task;
 
-import java.io.IOException;
-
 public class StopPanelCommandButtonsActionTask extends Task<Object, Void> {
     private static Logger LOGGER = Logger.getLogger(StopPanelCommandButtonsActionTask.class);
 
@@ -18,11 +15,7 @@ public class StopPanelCommandButtonsActionTask extends Task<Object, Void> {
 
     public StopPanelCommandButtonsActionTask() {
         super(RFIDPalletApp.getApplication());
-        try {
-            this.RFIDConnectInstance = RFIDConnectConnectorFactoryList.getInstance();
-        } catch (IOException e) {
-            LOGGER.error(e);
-        }
+        this.RFIDConnectInstance = RFIDPalletApp.RFIDConnectJavaInstance;
     }
 
     /**

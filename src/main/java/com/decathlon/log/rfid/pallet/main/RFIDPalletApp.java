@@ -1,7 +1,6 @@
 package com.decathlon.log.rfid.pallet.main;
 
 import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
-import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
 import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
 import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
@@ -11,6 +10,7 @@ import com.decathlon.log.rfid.keyboard.loader.VirtualKeyBoardLayoutType;
 import com.decathlon.log.rfid.keyboard.ui.board.VirtualKeyBoard;
 import com.decathlon.log.rfid.keyboard.ui.textfield.EditableTextField;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
+import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.ui.glassPane.DarkGlassPane;
 import com.decathlon.log.rfid.pallet.ui.panel.ConnectJavaCheckDialog;
 import com.decathlon.log.rfid.pallet.ui.panel.ShutdownJDialog;
@@ -41,6 +41,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
     public static final int APPLICATION_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final String TASK_SERVICE_NAME = "RfidPalletTaskService";
     private static RFIDPalletMainPanel view;
+    public static RFIDConnectConnector RFIDConnectJavaInstance;
 
     private ShutdownJDialog shutDownJDialog;
     private ConnectJavaCheckDialog connectJavaCheckDialog;
@@ -48,7 +49,6 @@ public class RFIDPalletApp extends SingleFrameApplication {
 
     private DarkGlassPane darkGlassPane;
 
-    public static Boolean isReading = false;
 
     public static RFIDPalletMainPanel getView() {
         if (view == null) {
@@ -155,14 +155,15 @@ public class RFIDPalletApp extends SingleFrameApplication {
     }
 
     private void initConnectJava() {
-
-        RFIDConnectConnector RFIDConnectInstance = new ConnectJavaIntegratorHelper(new LoggerImpl())
+        LOGGER.info(System.getProperty("user.dir"));
+        SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE, false);
+        this.RFIDConnectJavaInstance = new ConnectJavaIntegratorHelper(new LoggerImpl())
                 .addListener(this.getClass().toString(), new PalletDefaultEventPropagator())
                 .removeDefautlListener()
                 .returnInstance();
 
-        if(Utils.isNotNull(RFIDConnectInstance)){
-            RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
+        if(Utils.isNotNull(RFIDConnectJavaInstance)){
+            RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
         }else{
             LOGGER.error("RFIDConnect instance is null");
             showConnectJavaCheckDialog();
@@ -234,21 +235,19 @@ public class RFIDPalletApp extends SingleFrameApplication {
      */
     @Override
     protected void shutdown() {
-        // override default shutdown policy which stores window's bounds and components size.
-        try{
-            super.shutdown();
-            RFIDConnectConnectorFactoryList.getInstance()
-                    .sendCommandThrows(
-                            ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.DISCONNECT_DEVICE)
-                    );
-        }catch(Exception e){
-            log.error("error while stopping scanner.",e);
-            JOptionPane.showMessageDialog(this.getMainFrame(),
-                    ResourceManager.getInstance().getString("app.shutdown.error"),
-                    ResourceManager.getInstance().getString("app.shutdown.error.title"),
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        super.shutdown();
+
     }
+
+    public void displayErrorDialog(){
+        JOptionPane.showMessageDialog(getMainFrame(),
+                ResourceManager.getInstance().getString("app.shutdown.error"),
+                ResourceManager.getInstance().getString("app.shutdown.error.title"),
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+
+
 
     /**
      * This method is to initialize the specified window by injecting resources.

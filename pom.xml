@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.decathlon.log.rfid</groupId>
 	<artifactId>pallet</artifactId>
-	<version>1.3.1-SNAPSHOT</version>
+	<version>1.3.2-SNAPSHOT</version>
 	<name>log-rfid-pallet</name>
 	<description>Application desktop du mat pour la lecture des palettes. Utilise RFIdConnectJava pour la lecture RFID.</description>
 
@@ -76,13 +76,13 @@
 							<classpathPrefix>./lib/</classpathPrefix>
 						</manifest>
 						<manifestEntries>
-							<SplashScreen-Image>./resources/media/decathlon.png</SplashScreen-Image>
+							<SplashScreen-Image>decathlon.png</SplashScreen-Image>
 							<Class-Path>./resources/media/ ./resources/conf/ ./resources/others/ </Class-Path>
 						</manifestEntries>
 					</archive>
 					<excludes>
 						<exclude>**/*.properties</exclude>
-						<exclude>**/*.png</exclude>
+						<!--<exclude>**/*.png</exclude>-->
 						<exclude>**/*.jpg</exclude>
 					</excludes>
 				</configuration>

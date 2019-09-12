@@ -70,7 +70,7 @@ public class TagsListener extends AbstractDefaultPropagatorListener {
         final TdoItem tdoItem = new TdoItem();
         tdoItem.setSgtin(sgtinNumber);
         tdoItem.setEan(EPCUtils.getGTIN13(sgtinNumber));
-        //tdoItem.setGtin14(null);
+        //tdoItem.setGtin14();
         return tdoItem;
     }
 
