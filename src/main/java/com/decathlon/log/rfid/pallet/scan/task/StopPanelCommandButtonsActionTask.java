@@ -1,8 +1,8 @@
 package com.decathlon.log.rfid.pallet.scan.task;
 
-import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.mqtt.RFIDConnectJavaMqttInstance;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import org.apache.log4j.Logger;
@@ -11,7 +11,7 @@ import org.jdesktop.application.Task;
 public class StopPanelCommandButtonsActionTask extends Task<Object, Void> {
     private static Logger LOGGER = Logger.getLogger(StopPanelCommandButtonsActionTask.class);
 
-    private RFIDConnectConnector RFIDConnectInstance;
+    private RFIDConnectJavaMqttInstance RFIDConnectInstance;
 
     public StopPanelCommandButtonsActionTask() {
         super(RFIDPalletApp.getApplication());
@@ -26,7 +26,7 @@ public class StopPanelCommandButtonsActionTask extends Task<Object, Void> {
 
         if(Utils.isNotNull(RFIDConnectInstance)){
             LOGGER.debug("START NEW READ");
-            RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.START_CONTINUOUS_READ));
+            RFIDConnectInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
         }else{
             LOGGER.warn("connectInstance was null");
         }

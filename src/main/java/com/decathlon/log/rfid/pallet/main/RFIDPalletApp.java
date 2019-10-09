@@ -1,9 +1,10 @@
 package com.decathlon.log.rfid.pallet.main;
 
-import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
-import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.configurator.CJIFluentConfigurator;
+import com.decathlon.connectJavaIntegrator.mqtt.RFIDConnectJavaMqttInstance;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.keyboard.bean.VirtualKeyBoardConfig;
 import com.decathlon.log.rfid.keyboard.loader.VirtualKeyBoardLayoutType;
@@ -15,7 +16,6 @@ import com.decathlon.log.rfid.pallet.ui.glassPane.DarkGlassPane;
 import com.decathlon.log.rfid.pallet.ui.panel.ConnectJavaCheckDialog;
 import com.decathlon.log.rfid.pallet.ui.panel.ShutdownJDialog;
 import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.LoggerImpl;
-import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.PalletDefaultEventPropagator;
 import com.decathlon.log.rfid.pallet.utils.RFIDProperties;
 import lombok.extern.log4j.Log4j;
 import net.miginfocom.swing.MigLayout;
@@ -41,7 +41,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
     public static final int APPLICATION_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final String TASK_SERVICE_NAME = "RfidPalletTaskService";
     private static RFIDPalletMainPanel view;
-    public static RFIDConnectConnector RFIDConnectJavaInstance;
+    public static RFIDConnectJavaMqttInstance RFIDConnectJavaInstance;
 
     private ShutdownJDialog shutDownJDialog;
     private ConnectJavaCheckDialog connectJavaCheckDialog;
@@ -157,10 +157,7 @@ public class RFIDPalletApp extends SingleFrameApplication {
     private void initConnectJava() {
         LOGGER.info(System.getProperty("user.dir"));
         SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE, false);
-        this.RFIDConnectJavaInstance = new ConnectJavaIntegratorHelper(new LoggerImpl())
-                .addListener(this.getClass().toString(), new PalletDefaultEventPropagator())
-                .removeDefautlListener()
-                .returnInstance();
+        this.RFIDConnectJavaInstance = new CJIFluentConfigurator(ConnectCmdKey.OBSERVABLE_PATTERN,new LoggerImpl()).returnInstance();
 
         if(Utils.isNotNull(RFIDConnectJavaInstance)){
             RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));

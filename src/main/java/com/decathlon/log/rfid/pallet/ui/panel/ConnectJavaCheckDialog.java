@@ -1,10 +1,12 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
-import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
+import com.decathlon.connectJavaIntegrator.configurator.CJIFluentConfigurator;
+import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.ui.button.ColoredButton;
+import com.decathlon.log.rfid.pallet.utils.ConnectJavaIntegratorUtils.LoggerImpl;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -86,7 +88,7 @@ public class ConnectJavaCheckDialog extends JDialog {
     }
 
     public void checkRFIDConnectJavaStatus(){
-        Boolean isRFIDConnectWorked = Utils.isNotNull(new ConnectJavaIntegratorHelper().returnInstance());
+        Boolean isRFIDConnectWorked = Utils.isNotNull(new CJIFluentConfigurator(ConnectCmdKey.OBSERVABLE_PATTERN, new LoggerImpl()).returnInstance());
         if(isRFIDConnectWorked){
             this.setVisible(false);
         }

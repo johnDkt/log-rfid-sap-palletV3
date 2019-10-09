@@ -1,10 +1,14 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
-import com.decathlon.connectJavaIntegrator.factory.ConnectJavaIntegratorHelper;
-import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
-import com.decathlon.connectJavaIntegrator.tcp.RFIDConnectConnector;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.factory.CJI;
+import com.decathlon.connectJavaIntegrator.mqtt.RFIDConnectJavaMqttInstance;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.commonCommandsObject.deviceStatus.DeviceStatus;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnectJava.EventPropagatorObject;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnectJava.IRFIDConnectCmdReceiverListener;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnectJava.observable.ConnectCommandObservable;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
@@ -75,14 +79,14 @@ public class ScanPanelLight extends JPanel {
 
     private TaskManagerService taskManagerService;
     private SessionService sessionService;
-    private RFIDConnectConnector RFIDConnectInstance;
+    private RFIDConnectJavaMqttInstance RFIDConnectInstance;
 
     public ScanPanelLight() {
         super();
         this.setSize(1024,768);
         this.sessionService = SessionService.getInstance();
         try {
-            this.RFIDConnectInstance = RFIDConnectConnectorFactoryList.getInstance();
+            this.RFIDConnectInstance = CJI.getInstance();
         } catch (IOException e) {
             LOGGER.error(e);
         }
@@ -142,10 +146,6 @@ public class ScanPanelLight extends JPanel {
         };
 
         tagsListener = new TagsListener(tagsHandler);
-
-        new ConnectJavaIntegratorHelper()
-                .addListener(TagsListener.class.toString(),tagsListener)
-                .removeListener(RFIDPalletApp.class.toString());
     }
 
     @Override
@@ -383,15 +383,20 @@ public class ScanPanelLight extends JPanel {
     }
 
     public void startScanner() {
-        /*log.debug("Clean table");
+        log.debug("Clean table");
         final ItemsTable itemsTable = allItems.getItemsTable();
-        itemsTable.clear();*/
+        itemsTable.clear();
 
         log.debug("startStopScanner - Begin");
 
         this.playTask = new PlayTask(getPlayLabel());
-        TagsListener clientListenerImpl = (TagsListener) RFIDConnectConnectorFactoryList.getListenerfrom(TagsListener.class);
-        clientListenerImpl.clearTags();
+        IRFIDConnectCmdReceiverListener test =  RFIDConnectInstance.getClassThatComputeReceivedCommands();
+        if(ConnectCmdKey.OBSERVABLE_PATTERN.equals(CJI.getInstanceType())){
+            ((ConnectCommandObservable) test).propagateEvent(new EventPropagatorObject(this.getClass().getSimpleName(),"clearTags"));
+        }
+
+        //TagsListener clientListenerImpl = (TagsListener) CJI.getListenerfrom(TagsListener.class);
+        //clientListenerImpl.clearTags();
         startReading();
 
         timerReadPallet = new Timer("Timer-Read-Pallet");
@@ -469,14 +474,14 @@ public class ScanPanelLight extends JPanel {
         this.timerReadPallet.cancel();
 
         if(Utils.isNotNull(RFIDPalletApp.RFIDConnectJavaInstance)){
-            try {
-                SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE,false);
-                RFIDPalletApp.RFIDConnectJavaInstance.sendCommandThrows(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
-            } catch (Exception e) {
-                log.error(e);
+            if(DeviceStatus.getIsReading()){
+                try {
+                    RFIDPalletApp.RFIDConnectJavaInstance.sendCommandThrows(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
+                } catch (Exception e) {
+                    log.error(e);
+                }
             }
         }
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

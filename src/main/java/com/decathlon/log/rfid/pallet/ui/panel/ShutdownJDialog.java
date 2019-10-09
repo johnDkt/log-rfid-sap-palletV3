@@ -1,14 +1,13 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
-import com.decathlon.connectJavaIntegrator.factory.RFIDConnectConnectorFactoryList;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.CommandManager;
-import com.decathlon.connectJavaIntegrator.tcp.handleCommands.ConnectCommandToSend;
+import com.decathlon.connectJavaIntegrator.factory.CJI;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.commonCommandsObject.deviceStatus.DeviceStatus;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
-import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
-import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.ui.button.ColoredButton;
 import net.miginfocom.swing.MigLayout;
 
@@ -96,11 +95,8 @@ public class ShutdownJDialog extends JDialog {
             if(Utils.isNotNull(RFIDPalletApp.RFIDConnectJavaInstance)){
                 //check that Pallet is in reading state or not (true or false)
                 //change waiting time to send disconnection command accordingly to RFID reading state
-                if(SessionService.getInstance().retrieveFromSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE,Boolean.class)){
+                if(DeviceStatus.getIsReading()){
                     RFIDPalletApp.RFIDConnectJavaInstance.sendCommandThrows(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.STOP_READ));
-                    timeBeforeSendingDisconnectionCommand = 250;
-                }else{
-                     timeBeforeSendingDisconnectionCommand= 0;
                 }
                 java.util.Timer disconnectionTimer = new java.util.Timer("exit-timer");
                 disconnectionTimer.schedule(new TimerTask() {
@@ -108,7 +104,7 @@ public class ShutdownJDialog extends JDialog {
                     public void run() {
                         RFIDPalletApp.RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.DISCONNECT_DEVICE));
                     }
-                }, timeBeforeSendingDisconnectionCommand);
+                }, 250);
                 disconnectionTimer.schedule(new DeconnectionRFIDConnectTask(disconnectionTimer), 1000);
             }
         } catch (Exception e) {
@@ -128,7 +124,7 @@ public class ShutdownJDialog extends JDialog {
         public void run() {
             try {
                 System.out.println("Exit app");
-                RFIDConnectConnectorFactoryList.getInstance().close();
+                CJI.getInstance().close();
                 RFIDPalletApp.getApplication().exitApplication();
             } catch (Exception e) {
                 e.printStackTrace();

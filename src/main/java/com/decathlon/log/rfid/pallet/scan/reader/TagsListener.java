@@ -1,17 +1,19 @@
 package com.decathlon.log.rfid.pallet.scan.reader;
 
-import com.decathlon.connectJavaIntegrator.tcp.listener.AbstractDefaultPropagatorListener;
+import com.decathlon.connectJavaIntegrator.configurator.CJIFluentConfigurator;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.commonCommandsObject.deviceStatus.DeviceStatus;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnectJava.EventPropagatorObject;
+import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
 import com.embisphere.esr.utils.epc.EPCUtils;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Log4j
-public class TagsListener extends AbstractDefaultPropagatorListener {
+public class TagsListener implements Observer {
 
     private static final Logger SGTIN_LOG = Logger.getLogger("sgtin");
     private static final Logger SGTIN_OK_LOG = Logger.getLogger("sgtinok");
@@ -27,6 +29,7 @@ public class TagsListener extends AbstractDefaultPropagatorListener {
     public TagsListener(final TagsHandler tagsHandler) {
         this.scannedTags = new ArrayList<String>();
         this.tagsHandler = tagsHandler;
+        CJIFluentConfigurator.AddObserverStatic(this);
     }
 
     public void clearTags() {
@@ -79,4 +82,22 @@ public class TagsListener extends AbstractDefaultPropagatorListener {
     }
 
 
+    @Override
+    public void update(Observable o, Object arg) {
+        LOGGER.info(DeviceStatus.display());
+        System.out.println("update call");
+        EventPropagatorObject event = (EventPropagatorObject) arg;
+        LOGGER.info(event.toString());
+        if(ConnectCmdKey.ACTION_START.equals(event.getTitleEvent())){
+           for(Object tags : event.getFunctionnalDataContainer().get(EventPropagatorObject.TAG)){
+               if(tags instanceof String[]){
+                   this.getTags((String[]) tags);
+               }
+
+           }
+            //this.getTags(event.getFunctionnalDataContainer().get(EventPropagatorObject.TAG));
+        }else if("clearTags".equals(event.getTitleEvent())){
+            this.clearTags();
+        }
+    }
 }
