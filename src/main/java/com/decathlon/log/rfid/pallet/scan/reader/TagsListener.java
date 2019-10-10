@@ -41,8 +41,11 @@ public class TagsListener implements Observer {
         for (String tag : tags){
             SGTIN_LOG.debug(tag + "|" + "unknown antenna");
             if(!scannedTags.contains(tag)){
+                log.debug("add tag in scannedTags list : "+tag);
                 scannedTags.add(tag);
                 sendTagToTagsHandler(tag);
+            }else{
+                log.debug("tag already in scannedTags list : "+tag);
             }
         }
     }
@@ -84,7 +87,7 @@ public class TagsListener implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        LOGGER.info(DeviceStatus.display());
+        LOGGER.trace(DeviceStatus.display());
         System.out.println("update call");
         EventPropagatorObject event = (EventPropagatorObject) arg;
         LOGGER.info(event.toString());
@@ -93,9 +96,7 @@ public class TagsListener implements Observer {
                if(tags instanceof String[]){
                    this.getTags((String[]) tags);
                }
-
            }
-            //this.getTags(event.getFunctionnalDataContainer().get(EventPropagatorObject.TAG));
         }else if("clearTags".equals(event.getTitleEvent())){
             this.clearTags();
         }

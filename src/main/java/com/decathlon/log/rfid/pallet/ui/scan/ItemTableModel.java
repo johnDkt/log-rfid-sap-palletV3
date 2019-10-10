@@ -97,44 +97,34 @@ public class ItemTableModel extends AbstractTableModel {
     }
 
     public void refreshData() {
+        log.debug("refreshData after ws call");
         for (final ItemReadForTableData readBefore : readItemsBeforeTheoreticalData) {
-
-            //boolean isFound = findItemIntoTheoreticalItems(readBefore);
             boolean isFound = expectedAndDisplayedItems.addReadItem(new TdoItem(readBefore.getItemCode(), readBefore.getEan()));
+            log.debug("item read before wsCall = "+readBefore.toString());
+            log.debug("is matching = "+isFound);
             if (isFound) {
                 readEpcAfterTheoreticalData.add(readBefore.getEpc());
             }
         }
 
     }
-    // itemDisplayed = As400Infos
-    // ItemReadForTableData readBefore = RFIDInfos
-    private boolean findItemIntoTheoreticalItems(ItemReadForTableData readBefore) {
-        for (final ItemForTableData itemDisplayed : getExpectedAndDisplayedItems().getItems()) {
-            if (itemDisplayed.hasEan(readBefore.getEan())
-                    || itemDisplayed.getItemCode().equals(readBefore.getItemCode())) {
-
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-
 
     public void addReadItem(final TdoItem item) {
+        log.trace("addReadItem : "+item.toString());
+        log.trace("addReadItem : hasDataFromServer =" + expectedAndDisplayedItems.hasDataFromServer());
+
         if (item == null) {
             return;
         }
-
         if (expectedAndDisplayedItems.hasDataFromServer()) {
+            log.trace("addReadItem : has data from server");
+            log.trace("addReadItem : is sgtin " + item.getSgtin() + " match with expected : " + expectedAndDisplayedItems.addReadItem(item));
             if (expectedAndDisplayedItems.addReadItem(item)) {
                 readEpcAfterTheoreticalData.add(item.getSgtin());
             }
         } else {
-            expectedAndDisplayedItems.addReadItem(item);
+            log.trace("addReadItem : hasn't data from server , add in readItemsBeforeTheoreticalData");
+            //expectedAndDisplayedItems.addReadItem(item); // sert à rien ?
             readItemsBeforeTheoreticalData.add(new ItemReadForTableData(item));
         }
         fireTableDataChanged();

@@ -2,17 +2,21 @@ package com.decathlon.log.rfid.pallet.ui.scan;
 
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
+@Slf4j
 public class ExpectedAndDisplayedItems {
 
     private List<ItemForTableData> items;
     private ItemForTableData uselessItem;
-    private boolean dataFromTheServer;
+    @Setter
+    public boolean dataFromTheServer;
 
     public ExpectedAndDisplayedItems() {
         items = new ArrayList<ItemForTableData>();
@@ -22,6 +26,7 @@ public class ExpectedAndDisplayedItems {
     public void setTheoreticalData(final List<ItemForTableData> items) {
         this.items = items;
         dataFromTheServer = true;
+        System.out.println("dataFromTheServer = true");
     }
 
     public void upUselessQuantity() {
@@ -29,6 +34,7 @@ public class ExpectedAndDisplayedItems {
     }
 
     public boolean addReadItem(final TdoItem tdoItem) {
+        double startTime = System.nanoTime();
         Boolean epcMathing = false;
         if (!dataFromTheServer || items.isEmpty()) {
             upUselessQuantity();
@@ -47,6 +53,10 @@ public class ExpectedAndDisplayedItems {
         }
 
         Collections.sort(items);
+
+        double endTime = System.nanoTime();
+        double duration = (endTime - startTime);
+        log.trace("matching algo execution time = "+duration/1000000+"ms");
         return epcMathing;
     }
 
@@ -56,7 +66,7 @@ public class ExpectedAndDisplayedItems {
         String rfidCodeArt = "";
         Boolean returnValue = false;
         int i = 0;
-        if( null != ean && !ean.equals("") && ean.length() >= 13 ){ // constantes à externaliser
+        if( null != ean && !ean.equals("")){ // constantes à externaliser
             if("21".equals(ean.substring(0,2))){
                 rfidCodeArt = ean.substring(2,9);
             }else if("200".equals(ean.substring(0,3))){

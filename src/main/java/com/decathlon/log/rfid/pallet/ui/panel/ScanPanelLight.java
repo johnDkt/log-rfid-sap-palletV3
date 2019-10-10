@@ -358,6 +358,7 @@ public class ScanPanelLight extends JPanel {
     public void reset() {
         Logger.getLogger("action").info(sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId() + "|RESET");
         stopReading();
+        ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
         goToParamPanelWithSendDataToServer(false);
     }
 
@@ -365,6 +366,7 @@ public class ScanPanelLight extends JPanel {
     public void validPallet() {
         Logger.getLogger("action").info(sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId() + "|VALID");
         stopReading();
+        ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
         goToParamPanelWithSendDataToServer(true);
     }
 

@@ -30,7 +30,6 @@ public class GetPalletContentWsTask extends Task<Object, Void> {
         this.parameters = sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class);
     }
 
-
     @Override
     protected Object doInBackground() throws Exception {
         BoExpedition b = new BoExpedition();

@@ -1,8 +1,10 @@
 package com.decathlon.log.rfid.pallet.ui.scan;
 
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
+import lombok.Data;
 import lombok.Getter;
 
+@Data
 @Getter
 public class ItemReadForTableData {
 
