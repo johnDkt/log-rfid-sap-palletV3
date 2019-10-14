@@ -358,7 +358,7 @@ public class ScanPanelLight extends JPanel {
     public void reset() {
         Logger.getLogger("action").info(sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId() + "|RESET");
         stopReading();
-        ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
+        reinitDataFromServerValue();
         goToParamPanelWithSendDataToServer(false);
     }
 
@@ -366,7 +366,7 @@ public class ScanPanelLight extends JPanel {
     public void validPallet() {
         Logger.getLogger("action").info(sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId() + "|VALID");
         stopReading();
-        ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
+        reinitDataFromServerValue();
         goToParamPanelWithSendDataToServer(true);
     }
 
@@ -455,6 +455,7 @@ public class ScanPanelLight extends JPanel {
                     log.debug("Auto validation send tags to server");
                     taskManagerService.blockUIThenExecuteTask(new SaveDetailsTask(tagsListener.getScannedTags(),
                             sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId()));
+                    reinitDataFromServerValue();
                     RFIDPalletApp.getView().showParamPanelAndClearScanTextField();
                 }
             };
@@ -463,6 +464,12 @@ public class ScanPanelLight extends JPanel {
             autoValidationTimer.schedule(autoValidationSendToServerTimerTask, autoValidationTimeout);
         }
     }
+
+    private void reinitDataFromServerValue(){
+        ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
+
+    }
+
 
     private void stopAutoValidation() {
         if (autoValidationTimer != null) {

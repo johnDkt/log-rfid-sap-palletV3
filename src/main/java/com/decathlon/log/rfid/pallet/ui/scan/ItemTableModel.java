@@ -118,13 +118,13 @@ public class ItemTableModel extends AbstractTableModel {
         }
         if (expectedAndDisplayedItems.hasDataFromServer()) {
             log.trace("addReadItem : has data from server");
-            log.trace("addReadItem : is sgtin " + item.getSgtin() + " match with expected : " + expectedAndDisplayedItems.addReadItem(item));
+            //log.trace("addReadItem : is sgtin " + item.getSgtin() + " match with expected : " + expectedAndDisplayedItems.addReadItem(item));
             if (expectedAndDisplayedItems.addReadItem(item)) {
                 readEpcAfterTheoreticalData.add(item.getSgtin());
             }
         } else {
             log.trace("addReadItem : hasn't data from server , add in readItemsBeforeTheoreticalData");
-            //expectedAndDisplayedItems.addReadItem(item); // sert à rien ?
+            expectedAndDisplayedItems.addReadItem(item); // met à jour la table de réusltat en incrémentant la première ligne (no item code)
             readItemsBeforeTheoreticalData.add(new ItemReadForTableData(item));
         }
         fireTableDataChanged();
