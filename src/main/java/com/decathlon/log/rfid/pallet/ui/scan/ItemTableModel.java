@@ -110,18 +110,20 @@ public class ItemTableModel extends AbstractTableModel {
     }
 
     public void addReadItem(final TdoItem item) {
-        log.trace("addReadItem : "+item.toString());
-        log.trace("addReadItem : hasDataFromServer =" + expectedAndDisplayedItems.hasDataFromServer());
 
         if (item == null) {
             return;
         }
+
+        log.trace("addReadItem : "+item.toString());
+        log.trace("addReadItem : hasDataFromServer =" + expectedAndDisplayedItems.hasDataFromServer());
+
         if (expectedAndDisplayedItems.hasDataFromServer()) {
-            log.trace("addReadItem : has data from server");
-            //log.trace("addReadItem : is sgtin " + item.getSgtin() + " match with expected : " + expectedAndDisplayedItems.addReadItem(item));
-            if (expectedAndDisplayedItems.addReadItem(item)) {
-                readEpcAfterTheoreticalData.add(item.getSgtin());
-            }
+                log.trace("addReadItem : has data from server");
+               // log.trace("addReadItem : is sgtin " + item.getSgtin() + " match with expected : " + expectedAndDisplayedItems.addReadItem(item));
+                if (expectedAndDisplayedItems.addReadItem(item)) {
+                    readEpcAfterTheoreticalData.add(item.getSgtin());
+                }
         } else {
             log.trace("addReadItem : hasn't data from server , add in readItemsBeforeTheoreticalData");
             expectedAndDisplayedItems.addReadItem(item); // met à jour la table de réusltat en incrémentant la première ligne (no item code)

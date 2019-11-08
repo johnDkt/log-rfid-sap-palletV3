@@ -1,9 +1,13 @@
 package com.decathlon.log.rfid.pallet.ui.scan;
 
 import com.google.common.collect.Lists;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Data
+@Slf4j
 public class ItemForTableData implements Comparable<ItemForTableData> {
 
     private final String description;
@@ -37,18 +41,23 @@ public class ItemForTableData implements Comparable<ItemForTableData> {
     }
 
     public boolean hasEan(final String eanToFind) {
+        log.trace("start comparison between tag EAN decoded "+eanToFind+" and EANs from "+this.getDescription());
         if(null != eanToFind ){
             for (final String ean : eans) {
                 if(null != ean && !("".equals(ean)) && ean.equals(eanToFind)){
+                    log.trace(eanToFind+" is matching with "+ean);
                     return true;
                 }
             }
         }
+        log.trace("no match found");
         return false;
     }
 
     public void upQty() {
+        log.trace("upQty called for "+this.getDescription()+", qty was "+qtyRead);
         this.qtyRead++;
+        log.trace("qty is now "+qtyRead);
     }
 
     public void setQtyRead(int qtyRead) {
