@@ -1,27 +1,31 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
-import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
-import com.decathlon.log.rfid.pallet.resources.ResourceManager;
-import com.decathlon.log.rfid.pallet.service.task.GetInformationFromWSTask;
-import com.decathlon.log.rfid.pallet.tdo.TdoItem;
-import com.decathlon.log.rfid.pallet.ui.button.ColoredButton;
-import com.decathlon.log.rfid.pallet.ui.field.EditableNumericalField;
-import com.decathlon.log.rfid.pallet.constants.Constants;
-import com.decathlon.log.rfid.pallet.tdo.TdoParameters;
-import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
+import com.decathlon.log.rfid.pallet.constants.Constants;
+import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
+import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.service.TaskManagerService;
+import com.decathlon.log.rfid.pallet.service.sap.config.EWMErrorCode;
+import com.decathlon.log.rfid.pallet.service.sap.impl.SimpleSapService;
+import com.decathlon.log.rfid.pallet.tdo.TdoItem;
+import com.decathlon.log.rfid.pallet.tdo.TdoParameters;
+import com.decathlon.log.rfid.pallet.ui.button.ColoredButton;
+import com.decathlon.log.rfid.pallet.ui.field.EditableNumericalField;
+import com.decathlon.log.rfid.pallet.ui.indicator.BusyIndicator;
+import com.decathlon.log.rfid.sap.client.exception.SapClientException;
+import com.decathlon.log.rfid.sap.client.exception.SapClientExceptionType;
 import lombok.extern.log4j.Log4j;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.application.Action;
-import org.jdesktop.application.Task;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log4j
 public class ParamPanel extends JPanel {
@@ -35,6 +39,7 @@ public class ParamPanel extends JPanel {
     private EditableNumericalField searchIdTextField;
     private JButton validButton;
 
+    private BusyIndicator busyIndicator;
     private TaskManagerService taskManagerService;
     private SessionService sessionService;
 
@@ -42,6 +47,7 @@ public class ParamPanel extends JPanel {
         super();
         taskManagerService = TaskManagerService.getInstance();
         sessionService = SessionService.getInstance();
+        busyIndicator = new BusyIndicator();
         initialize();
     }
 
@@ -163,7 +169,7 @@ public class ParamPanel extends JPanel {
         });
     }
 
-    private void setError(final String error) {
+    public void setError(final String error) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -173,32 +179,83 @@ public class ParamPanel extends JPanel {
     }
 
     @Action(taskService = "RfidPalletTaskService")
-    public void checkParams() throws Exception {
+    public void checkParams() {
         clearError();
 
         final TdoParameters parameters = getParameters();
-        final Map<String, String> errors = parameters.checkErrors();
+        sessionService.storeParameters(parameters);
 
-        if (parameters.hasErrors(errors)) {
-            setError(ResourceManager.getInstance().getString("CheckParameters.incorrect.data"));
-        } else {
-            final Task<Object, Void> task = new GetInformationFromWSTask() {
-                @Override
-                protected void succeeded(Object result) {
-                    super.succeeded(result);
-                    RFIDPalletApp.getView().getScanPanelLight().initUIWithDataFromServer(
-                            sessionService.retrieveListFromSession(RFIDPalletSessionKeys.LISTE_ARTICLES_THEORIQUE,
-                                    TdoItem.class));
+        ExecutorService executor = Executors.newCachedThreadPool();
+        executor.execute(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    notifyStartWsCallForGetHuData();
+                    java.util.List<TdoItem> result = new ArrayList<TdoItem>();
+                    SimpleSapService sapService = new SimpleSapService();
+                    result = sapService.retrieveContentFrom(parameters.getSearchId());
+                    notifyEndWsCallForGetHuData(result);
+                } catch (SapClientException e) {
+                    notifyError(e);
                 }
-            };
-            sessionService.storeParameters(parameters);
-            taskManagerService.execute(task);
+            }
+        }));
+    }
 
-            RFIDPalletApp.getApplication().hideVirtualKeyBoard();
-            RFIDPalletApp.getView().getScanPanelLight().startScanner();
-            RFIDPalletApp.getView().getScanPanelLight().reinitUI();
-            RFIDPalletApp.getView().showScanLightPanel();
+    private void notifyError(Exception exception){
+        busyIndicator.stop();
+        if (exception instanceof SapClientException) {
+            final SapClientException sapClientException = (SapClientException) exception;
+            log.error(sapClientException.getMessage(), sapClientException);
+            displayErrorMessageAccordingToTheExceptionType(sapClientException);
+        } else {
+            log.error("Unknown error while communicate with the server", exception);
+            stopScannerAndShowParamPanel(ResourceManager.getInstance().getString("ParamPanel.error.server.standard"));
         }
+    }
+
+    private void displayErrorMessageAccordingToTheExceptionType(final SapClientException sapException) {
+        final SapClientExceptionType type = sapException.getType();
+        String errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.standard");
+
+        if (sapException.hasEWMError()) {
+            errorMessage = chooseTheRightErrorMessage(sapException);
+        } else if (SapClientExceptionType.NOT_FOUND.equals(type)) {
+            errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.url.not.found");
+        } else if (SapClientExceptionType.TIMEOUT.equals(type)) {
+            errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.timeout");
+        }
+        stopScannerAndShowParamPanel(errorMessage);
+    }
+
+    private void stopScannerAndShowParamPanel(final String errorMessage) {
+        RFIDPalletApp.getView().getScanPanelLight().canceledScanner();
+        RFIDPalletApp.getView().showParamPanel();
+        RFIDPalletApp.getView().getParamPanel().setError(errorMessage);
+    }
+
+    private String chooseTheRightErrorMessage(final SapClientException sapException) {
+        if (sapException.getErrorCode().isPresent()) {
+            if (EWMErrorCode.HU_NOT_FOUND.getErrorCode().equals(sapException.getErrorCode().get())) {
+                return ResourceManager.getInstance().getString("ParamPanel.error.server.hu.not.found");
+            }
+        }
+        return ResourceManager.getInstance().getString("ParamPanel.error.server.standard");
+    }
+
+    private void notifyStartWsCallForGetHuData() {
+        log.debug("notifyStartWsCallForGetHuData");
+        RFIDPalletApp.getApplication().getMainFrame().getRootPane().setGlassPane(busyIndicator);
+        busyIndicator.start();
+    }
+
+    private void notifyEndWsCallForGetHuData(java.util.List<TdoItem> result) {
+        log.debug("notifyEndWsCallForGetHuData");
+        busyIndicator.stop();
+        RFIDPalletApp.getView().getScanPanelLight().initUIWithDataFromServer(result);
+        RFIDPalletApp.getApplication().hideVirtualKeyBoard();
+        RFIDPalletApp.getView().getScanPanelLight().startScanner();
+        RFIDPalletApp.getView().showScanLightPanel();
     }
 
     @Action(taskService = "RfidPalletTaskService")

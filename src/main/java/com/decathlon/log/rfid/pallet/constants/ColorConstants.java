@@ -12,5 +12,6 @@ public class ColorConstants {
 
     public static final Color SHUTDOWN_YES_BTN = Color.GREEN;
     public static final Color SHUTDOWN_NO_BTN = Color.RED;
+    public static final Color WARNING_BACKGROUND_COLOR = new Color(224, 136, 59);
 
 }

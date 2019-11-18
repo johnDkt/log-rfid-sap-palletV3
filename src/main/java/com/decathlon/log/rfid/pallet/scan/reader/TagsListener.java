@@ -19,8 +19,19 @@ public class TagsListener implements Observer {
     private static final Logger SGTIN_OK_LOG = Logger.getLogger("sgtinok");
     private static final Logger LOGGER = Logger.getLogger(TagsListener.class);
 
-    @Getter
     private List<String> scannedTags;
+
+    public List<TdoItem> getScannedTags() {
+        List<TdoItem> scannedTagsConvertedIntoTdoItem = new ArrayList<TdoItem>();
+        for(String tag : scannedTags){
+            try {
+                scannedTagsConvertedIntoTdoItem.add(mapTDoItem(tag));
+            } catch (Exception e) {
+                log.debug("exception in getScannedTags : "+e);
+            }
+        }
+        return scannedTagsConvertedIntoTdoItem;
+    }
 
     @Getter
     private TagsHandler tagsHandler;

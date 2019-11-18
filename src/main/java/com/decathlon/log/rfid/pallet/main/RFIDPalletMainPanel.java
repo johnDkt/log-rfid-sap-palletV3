@@ -39,7 +39,7 @@ public class RFIDPalletMainPanel extends JPanel {
         return scanPanelLight;
     }
 
-    private ParamPanel getParamPanel() {
+    public ParamPanel getParamPanel() {
         if (paramPanel == null) {
             paramPanel = new ParamPanel();
         }
@@ -62,6 +62,16 @@ public class RFIDPalletMainPanel extends JPanel {
     public void showParamPanelAndClearScanTextField() {
         showParamPanel();
         paramPanel.clearScanTextField();
+    }
+
+    public void displayAdditionalMessage(final String message) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //getAdditionalInformation().setText(message);
+                //getAdditionalInformation().setVisible(true);
+            }
+        });
     }
 
 //    public void setQtyTotal(Integer total) {

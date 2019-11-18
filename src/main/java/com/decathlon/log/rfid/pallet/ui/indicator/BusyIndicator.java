@@ -56,13 +56,13 @@ public class BusyIndicator extends JComponent implements ActionListener {
         repaint();
     }
 
-    void start() {
+    public void start() {
         setVisible(true);
         requestFocusInWindow();
         timer.start();
     }
 
-    void stop() {
+    public void stop() {
         setVisible(false);
         timer.stop();
     }

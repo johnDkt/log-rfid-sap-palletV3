@@ -32,13 +32,13 @@ public class TaskManagerService {
         taskService.execute(task);
     }
 
-    public Task blockUIThenExecuteTask(final Task<Object, Void> task) {
+    public Task blockUIThenExecuteTask(final Task task) {
         blockTask(task);
         taskService.execute(task);
         return task;
     }
 
-    public Task blockTask(final Task<Object, Void> task) {
+    public Task blockTask(final Task task) {
         BusyIndicator glassPaneComponentBusyIndicator = new BusyIndicator();
         RFIDPalletApp.getApplication().getMainFrame().getRootPane().setGlassPane(glassPaneComponentBusyIndicator);
         task.setInputBlocker(new BusyIndicatorInputBlocker(task, glassPaneComponentBusyIndicator));

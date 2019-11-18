@@ -20,6 +20,8 @@ public class TdoItem implements Comparable<TdoItem>{
     private int qtyTheo;
     private List<String> encodedEan;
 
+    private String rawDescription;
+
     public TdoItem() {
         this("","","","");
     }

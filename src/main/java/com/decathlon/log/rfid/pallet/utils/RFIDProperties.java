@@ -29,7 +29,7 @@ public class RFIDProperties {
      * @return properties object
      */
     public static String getValue(PROPERTIES p) {
-        return props.getProperty(p.toString()) != null ? props.getProperty(p.toString()).trim() : null;
+        return props.getProperty(p.toString()) != null ? props.getProperty(p.toString()).trim() : "";
     }
 
     public static boolean stringStartsWithItemFromList(String inputString, String[] items) {
@@ -150,7 +150,19 @@ public class RFIDProperties {
 
         AUTO_VALIDATION("AUTO_VALIDATION"),
 
-        AUTO_VALIDATION_TIMEOUT("AUTO_VALIDATION_TIMEOUT");
+        AUTO_VALIDATION_TIMEOUT("AUTO_VALIDATION_TIMEOUT"),
+
+        SAP_SERVICE_ROOT("SAP_SERVICE_ROOT"),
+
+        SAP_WAREHOUSE("SAP_WAREHOUSE"),
+
+        SAP_LOGIN("SAP_LOGIN"),
+
+        SAP_PASSWORD("SAP_PASSWORD"),
+
+        SAP_TIMEOUT("SAP_TIMEOUT"),
+
+        SAP_CLIENT("SAP_CLIENT");
 
 
         private String value;

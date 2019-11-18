@@ -10,17 +10,21 @@ import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnec
 import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
 import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
+import com.decathlon.log.rfid.pallet.autovalidation.AutoValidationPropertiesHolder;
+import com.decathlon.log.rfid.pallet.autovalidation.task.AutoValidationCountdownTimerTask;
+import com.decathlon.log.rfid.pallet.autovalidation.task.AutoValidationSendHuTimerTask;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
+import com.decathlon.log.rfid.pallet.constants.Fonts;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.scan.reader.TagsHandler;
 import com.decathlon.log.rfid.pallet.scan.reader.TagsListener;
 import com.decathlon.log.rfid.pallet.scan.task.PlayTask;
-import com.decathlon.log.rfid.pallet.scan.task.SaveDetailsTask;
 import com.decathlon.log.rfid.pallet.scan.task.StartPanelCommandButtonsActionTask;
 import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.service.TaskManagerService;
+import com.decathlon.log.rfid.pallet.service.controller.SendHuWithContentTask;
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
 import com.decathlon.log.rfid.pallet.tdo.TdoParameters;
 import com.decathlon.log.rfid.pallet.ui.button.ColoredButton;
@@ -56,6 +60,7 @@ public class ScanPanelLight extends JPanel {
     private ColoredButton validButton;
     private ColoredButton detailsButton;
     private JLabel countTagsLabel;
+    private JLabel additionalInformation;
 
     private boolean details = false;
 
@@ -130,6 +135,7 @@ public class ScanPanelLight extends JPanel {
         add(countingPanel, "newline, grow");
         add(getGlobalProgressBar(), "newline, grow");
         add(getPanelDetails(), "newline, grow");
+        add(getAdditionalInformation(), "newline, grow");
     }
 
     private void initTagsListenerAndTagsHandler() {
@@ -427,49 +433,30 @@ public class ScanPanelLight extends JPanel {
     private void stopScanner() {
         stopReading();
 
-        if (Boolean.parseBoolean(RFIDProperties.getValue(RFIDProperties.PROPERTIES.AUTO_VALIDATION))) {
-
-            final Integer autoValidationTimeout =
-                    Integer.parseInt(RFIDProperties.getValue(RFIDProperties.PROPERTIES.AUTO_VALIDATION_TIMEOUT));
-
-            final int autoValidationLogInterval = 5000;
-
-            autoValidationTimer = new Timer("Timer-auto-validation");
-            final TimerTask autoValidationLogTimerTask = new TimerTask() {
-
-                private int numberOfCalls = 0;
-
-                @Override
-                public void run() {
-                    long timeLeft = autoValidationTimeout - (numberOfCalls * autoValidationLogInterval);
-                    ++numberOfCalls;
-                    log.debug("Auto validation in " + (timeLeft / 1000) + " seconds");
-                }
-
-            };
-
-            final TimerTask autoValidationSendToServerTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    autoValidationLogTimerTask.cancel();
-                    log.debug("Auto validation send tags to server");
-                    taskManagerService.blockUIThenExecuteTask(new SaveDetailsTask(tagsListener.getScannedTags(),
-                            sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId()));
-                    reinitDataFromServerValue();
-                    RFIDPalletApp.getView().showParamPanelAndClearScanTextField();
-                }
-            };
-
-            autoValidationTimer.schedule(autoValidationLogTimerTask, 0, autoValidationLogInterval);
-            autoValidationTimer.schedule(autoValidationSendToServerTimerTask, autoValidationTimeout);
+        if (AutoValidationPropertiesHolder.getInstance().isEnable()) {
+            startAutoValidation();
         }
+    }
+
+    private void startAutoValidation() {
+        final int autoValidationTimeout = AutoValidationPropertiesHolder.getInstance().getTimeout();
+        final int autoValidationLogInterval = AutoValidationPropertiesHolder.getInstance().getTimeout() / 5;
+
+        autoValidationTimer = new Timer("Timer-auto-validation");
+        final TimerTask autoValidationLogTimerTask = new AutoValidationCountdownTimerTask(autoValidationLogInterval);
+
+        final String hu = sessionService.getParameters().getSearchId();
+        final TimerTask autoValidationSendToServerTimerTask =
+                new AutoValidationSendHuTimerTask(hu, tagsListener, autoValidationLogTimerTask);
+
+        autoValidationTimer.schedule(autoValidationLogTimerTask, 0, autoValidationLogInterval);
+        autoValidationTimer.schedule(autoValidationSendToServerTimerTask, autoValidationTimeout);
     }
 
     private void reinitDataFromServerValue(){
         ((ItemTableModel)(this.getAllItemsPanel().getItemsTable().getModel())).getExpectedAndDisplayedItems().setDataFromTheServer(false);
 
     }
-
 
     private void stopAutoValidation() {
         if (autoValidationTimer != null) {
@@ -479,8 +466,12 @@ public class ScanPanelLight extends JPanel {
     }
 
     private void stopReading() {
-        this.playTask.stop();
-        this.timerReadPallet.cancel();
+        if(null != playTask){
+            this.playTask.stop();
+        }
+        if(null != timerReadPallet ){
+            this.timerReadPallet.cancel();
+        }
 
         if(Utils.isNotNull(RFIDPalletApp.RFIDConnectJavaInstance)){
             if(DeviceStatus.getIsReading()){
@@ -511,15 +502,16 @@ public class ScanPanelLight extends JPanel {
     }
 
     private void goToParamPanelWithSendDataToServer(final boolean isSendToServer) {
-        stopAutoValidation();
-        if (isSendToServer && hasTagsToSend()) {
-            taskManagerService.blockUIThenExecuteTask(new SaveDetailsTask(tagsListener.getScannedTags(),
-                    sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId()));
-            RFIDPalletApp.getView().showParamPanelAndClearScanTextField();
+        stopAutoValidationTimer();
 
+        if (isSendToServer && hasTagsToSend()) {
+            taskManagerService.blockUIThenExecuteTask(new SendHuWithContentTask(
+                    sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId(), tagsListener.getScannedTags()));
+        } else {
+            RFIDPalletApp.getView().showParamPanel();
         }
-        RFIDPalletApp.getView().showParamPanel();
     }
+
 
     private boolean hasTagsToSend() {
         return tagsListener.getScannedTags().size() >0;
@@ -547,6 +539,40 @@ public class ScanPanelLight extends JPanel {
             this.timer.cancel();
         }
 
+    }
+
+    public void displayAdditionalMessage(final String message) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                getAdditionalInformation().setText(message);
+                getAdditionalInformation().setVisible(true);
+            }
+        });
+    }
+
+    public JLabel getAdditionalInformation() {
+        if (additionalInformation == null) {
+            additionalInformation = new JLabel();
+            additionalInformation.setHorizontalTextPosition(SwingConstants.CENTER);
+            additionalInformation.setHorizontalAlignment(SwingConstants.CENTER);
+            additionalInformation.setFont(Fonts.LARGE);
+            additionalInformation.setOpaque(true);
+            additionalInformation.setBackground(ColorConstants.WARNING_BACKGROUND_COLOR);
+        }
+        return additionalInformation;
+    }
+
+    private void stopAutoValidationTimer() {
+        if (autoValidationTimer != null) {
+            autoValidationTimer.cancel();
+            log.debug("Auto validation cancelled !");
+        }
+    }
+
+    public void canceledScanner() {
+        stopReading();
+        stopAutoValidationTimer();
     }
 
 }
