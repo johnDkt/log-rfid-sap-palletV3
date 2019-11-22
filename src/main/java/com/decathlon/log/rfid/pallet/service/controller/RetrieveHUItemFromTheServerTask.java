@@ -21,7 +21,7 @@ public class RetrieveHUItemFromTheServerTask extends Task<List<TdoItem>, Object>
 
     private String searchId;
 
-    public RetrieveHUItemFromTheServerTask(final String searchId) {
+    public RetrieveHUItemFromTheServerTask(final String searchId) throws SapClientException {
         super(RFIDPalletApp.getApplication());
         sapService = new SimpleSapService();
         this.searchId = searchId;
@@ -34,7 +34,7 @@ public class RetrieveHUItemFromTheServerTask extends Task<List<TdoItem>, Object>
     }
 
     @Override
-    protected void succeeded(List<TdoItem> result) { //TOdo cmt il arrive � recup une list de TdoItem
+    protected void succeeded(List<TdoItem> result) {
         RFIDPalletApp.getView().getScanPanelLight().initUIWithDataFromServer(result);
         if (result.isEmpty()) {
             RFIDPalletApp.getView().getScanPanelLight().displayAdditionalMessage(

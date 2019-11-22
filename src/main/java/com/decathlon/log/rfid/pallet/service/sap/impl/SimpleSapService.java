@@ -25,7 +25,7 @@ public class SimpleSapService implements SapService {
 
     private final SapConfigurationHolder sapConfig;
 
-    public SimpleSapService() {
+    public SimpleSapService() throws SapClientException {
         tdoItemMapper = new TdoItemMapper();
         doItemManager = new DoItemManager();
 

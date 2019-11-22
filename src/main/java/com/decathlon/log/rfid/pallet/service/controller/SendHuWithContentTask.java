@@ -25,7 +25,7 @@ public class SendHuWithContentTask extends Task<Void, Void> {
     private final String mastName;
     private final String warehouse;
 
-    public SendHuWithContentTask(final String uat, final List<TdoItem> tags) {
+    public SendHuWithContentTask(final String uat, final List<TdoItem> tags) throws SapClientException {
         super(RFIDPalletApp.getApplication());
         this.sapService = new SimpleSapService();
         this.mapper = new HuMapper();

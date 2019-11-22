@@ -78,9 +78,6 @@ public class RFIDProperties {
          */
         DEVICE_TYPE("DEVICE_TYPE"),
 
-
-        DISPLAY_AUTH_FORM("DISPLAY_AUTH_FORM"),
-
         /**
          * Nb of seconds we show the parameter popup error
          */
@@ -117,19 +114,9 @@ public class RFIDProperties {
         AS400_PROFILE_PASSWORD("AS400_PROFILE_PASSWORD"),
 
         /**
-         * WS_CALL_TIMEOUT
-         */
-        WS_CALL_TIMEOUT("WS_CALL_TIMEOUT"),
-
-        /**
          * USE_SYSTEM_PROXIES system property
          */
         USE_SYSTEM_PROXIES("USE_SYSTEM_PROXIES"),
-
-        /**
-         * AUTHENTICATE_WITH_WS
-         */
-        AUTHENTICATE_WITH_WS("AUTHENTICATE_WITH_WS"),
 
         /**
          * READ_SYSTEM_IN
@@ -143,8 +130,6 @@ public class RFIDProperties {
         SAVE_OUTPUT_TO_FILE("SAVE_OUTPUT_TO_FILE"),
 
         OUTPUT_SUFFIX_DATA_FILE("OUTPUT_SUFFIX_DATA_FILE"),
-
-        READ_TIMEOUT("READ_TIMEOUT"),
 
         LANGUAGE("LANGUAGE"),
 

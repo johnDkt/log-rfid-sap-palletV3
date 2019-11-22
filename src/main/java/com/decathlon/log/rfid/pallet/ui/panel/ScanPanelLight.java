@@ -33,6 +33,7 @@ import com.decathlon.log.rfid.pallet.ui.scan.ItemTableModel;
 import com.decathlon.log.rfid.pallet.ui.scan.ItemsScrollPane;
 import com.decathlon.log.rfid.pallet.ui.scan.ItemsTable;
 import com.decathlon.log.rfid.pallet.utils.RFIDProperties;
+import com.decathlon.log.rfid.sap.client.exception.SapClientException;
 import lombok.extern.log4j.Log4j;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
@@ -208,8 +209,7 @@ public class ScanPanelLight extends JPanel {
             detailsButton.setAction(actionMap.get("OpenDetailsPanel"));
             detailsButton.setText(ResourceManager.getInstance().getString(
                     "ScanPanelLight.details.button"));
-            detailsButton.setVisible(Boolean.parseBoolean(RFIDProperties
-                    .getValue(RFIDProperties.PROPERTIES.DEBUG)));
+            detailsButton.setVisible(true);
         }
         return detailsButton;
     }
@@ -403,8 +403,6 @@ public class ScanPanelLight extends JPanel {
             ((ConnectCommandObservable) test).propagateEvent(new EventPropagatorObject(this.getClass().getSimpleName(),"clearTags"));
         }
 
-        //TagsListener clientListenerImpl = (TagsListener) CJI.getListenerfrom(TagsListener.class);
-        //clientListenerImpl.clearTags();
         startReading();
 
         timerReadPallet = new Timer("Timer-Read-Pallet");
@@ -412,9 +410,7 @@ public class ScanPanelLight extends JPanel {
                 Long.parseLong(RFIDProperties
                         .getValue(RFIDProperties.PROPERTIES.READ_PALLET_TIMEOUT)));
 
-        taskManagerService.execute(new StartPanelCommandButtonsActionTask(
-                Integer.parseInt(RFIDProperties
-                        .getValue(RFIDProperties.PROPERTIES.READ_TIMEOUT))));
+        taskManagerService.execute(new StartPanelCommandButtonsActionTask());
     }
 
 
@@ -458,13 +454,6 @@ public class ScanPanelLight extends JPanel {
 
     }
 
-    private void stopAutoValidation() {
-        if (autoValidationTimer != null) {
-            autoValidationTimer.cancel();
-            log.debug("Auto validation cancelled !");
-        }
-    }
-
     private void stopReading() {
         if(null != playTask){
             this.playTask.stop();
@@ -505,8 +494,12 @@ public class ScanPanelLight extends JPanel {
         stopAutoValidationTimer();
 
         if (isSendToServer && hasTagsToSend()) {
-            taskManagerService.blockUIThenExecuteTask(new SendHuWithContentTask(
-                    sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId(), tagsListener.getScannedTags()));
+            try {
+                taskManagerService.blockUIThenExecuteTask(new SendHuWithContentTask(
+                        sessionService.retrieveFromSession(RFIDPalletSessionKeys.SESSION_PARAMETERS_KEY, TdoParameters.class).getSearchId(), tagsListener.getScannedTags()));
+            } catch (SapClientException e) {
+                log.error("Error when trying to send data to EWM : "+e);
+            }
         } else {
             RFIDPalletApp.getView().showParamPanel();
         }

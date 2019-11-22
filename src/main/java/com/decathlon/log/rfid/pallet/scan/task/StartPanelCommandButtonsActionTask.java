@@ -6,8 +6,6 @@ import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.commonCommandsObj
 import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
-import com.decathlon.log.rfid.pallet.main.RFIDPalletSessionKeys;
-import com.decathlon.log.rfid.pallet.service.SessionService;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Task;
 
@@ -15,17 +13,14 @@ import org.jdesktop.application.Task;
 public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
     private static Logger LOGGER = Logger.getLogger(StartPanelCommandButtonsActionTask.class);
 
-    private int timeout;
     private RFIDConnectJavaMqttInstance RFIDConnectJavaInstance;
 
     /**
      * Constructor.
      *
-     * @param timeout
      */
-    public StartPanelCommandButtonsActionTask(int timeout) {
+    public StartPanelCommandButtonsActionTask() {
         super(RFIDPalletApp.getApplication());
-        this.timeout = timeout;
         this.RFIDConnectJavaInstance = RFIDPalletApp.RFIDConnectJavaInstance;
     }
 
@@ -38,11 +33,10 @@ public class StartPanelCommandButtonsActionTask extends Task<Object, Void> {
         if(Utils.isNotNull(RFIDConnectJavaInstance)){
             LOGGER.debug("START NEW READ");
             if(DeviceStatus.getIsConnected()){
-                SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE,true);
+                RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.START_CONTINUOUS_READ));
             }else{
                 LOGGER.warn("impossible to start because device is not connected");
             }
-            RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.START_CONTINUOUS_READ));
         }else{
             LOGGER.warn("RFIDConnectInstance was null");
         }

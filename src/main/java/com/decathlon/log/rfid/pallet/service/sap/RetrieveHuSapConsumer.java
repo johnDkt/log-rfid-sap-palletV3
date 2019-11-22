@@ -18,17 +18,14 @@ public class RetrieveHuSapConsumer {
     private final SapConfigurationHolder sapConfig;
     private final ODataFormat format;
 
-    public RetrieveHuSapConsumer(final SapConfigurationHolder sapConfig, final ODataFormat format) {
+    public RetrieveHuSapConsumer(final SapConfigurationHolder sapConfig, final ODataFormat format) throws SapClientException {
         final String customServiceRoot = sapConfig.getServiceRoot() + ROOT_FOR_RETRIEVE_SERVICE;
         this.sapConfig = sapConfig;
         this.format = format;
-
         final String client = (sapConfig.getClient() != null) ? sapConfig.getClient() : SapHttpConfig.DEFAULT_CLIENT;
         final String lang = (sapConfig.getLang() != null) ? sapConfig.getLang() : SapHttpConfig.DEFAULT_LANG;
-        this.sapConsumer = new SapSimpleClient(customServiceRoot, new SapCredential(sapConfig.getLogin(), sapConfig.getPassword()),
-                new SapHttpConfig(format, sapConfig.getTimeout(), client, lang));
+        this.sapConsumer = new SapSimpleClient(customServiceRoot, new SapCredential(sapConfig.getLogin(), sapConfig.getPassword()), new SapHttpConfig(format, sapConfig.getTimeout(), client, lang));
     }
-
 
     public <T> T readHu(final String hu, final Class<T> clazz) throws SapClientException {
         return sapConsumer.readEntitySet(buildUriForRetrieveHUItem(hu), clazz);

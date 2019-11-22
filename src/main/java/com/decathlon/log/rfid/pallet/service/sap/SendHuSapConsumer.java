@@ -12,15 +12,16 @@ import com.decathlon.log.rfid.sap.client.uri.ODataUriBuilder;
 public class SendHuSapConsumer {
 
     private static final String ROOT_FOR_RETRIEVE_SERVICE = "/ZLOG_MOB_ODATA_SRV" ; // not set this const if serviceRoot is ever set in application.properties. new value : Z_LOG_RFID_HU_CONTENT_SRV | old value : /ZLOG_MOB_ODATA_SRV"
-    private final SapConsumer sapConsumer;
+    private SapConsumer sapConsumer = null;
 
-    public SendHuSapConsumer(final SapConfigurationHolder sapConfig, final ODataFormat format) {
+    public SendHuSapConsumer(final SapConfigurationHolder sapConfig, final ODataFormat format) throws SapClientException {
         final String customServiceRoot = sapConfig.getServiceRoot() + ROOT_FOR_RETRIEVE_SERVICE;
 
         final String client = (sapConfig.getClient() != null) ? sapConfig.getClient() : SapHttpConfig.DEFAULT_CLIENT;
         final String lang = (sapConfig.getLang() != null) ? sapConfig.getLang() : SapHttpConfig.DEFAULT_LANG;
         this.sapConsumer = new SapSimpleClient(customServiceRoot, new SapCredential(sapConfig.getLogin(), sapConfig.getPassword()),
-                new SapHttpConfig(format, sapConfig.getTimeout(), client, lang));
+                    new SapHttpConfig(format, sapConfig.getTimeout(), client, lang));
+
     }
 
     public <T> void sendHu(final T entity) throws SapClientException {

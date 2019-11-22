@@ -3,6 +3,7 @@ package com.decathlon.log.rfid.pallet.main;
 import com.decathlon.connectJavaIntegrator.configurator.CJIFluentConfigurator;
 import com.decathlon.connectJavaIntegrator.mqtt.RFIDConnectJavaMqttInstance;
 import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.CommandManager;
+import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.receiveFromConnectJava.EventPropagatorObject;
 import com.decathlon.connectJavaIntegrator.mqtt.handleCommands.sendToConnectJava.ConnectCommandToSend;
 import com.decathlon.connectJavaIntegrator.utils.ConnectCmdKey;
 import com.decathlon.connectJavaIntegrator.utils.Utils;
@@ -11,7 +12,6 @@ import com.decathlon.log.rfid.keyboard.loader.VirtualKeyBoardLayoutType;
 import com.decathlon.log.rfid.keyboard.ui.board.VirtualKeyBoard;
 import com.decathlon.log.rfid.keyboard.ui.textfield.EditableTextField;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
-import com.decathlon.log.rfid.pallet.service.SessionService;
 import com.decathlon.log.rfid.pallet.ui.glassPane.DarkGlassPane;
 import com.decathlon.log.rfid.pallet.ui.panel.ConnectJavaCheckDialog;
 import com.decathlon.log.rfid.pallet.ui.panel.ShutdownJDialog;
@@ -30,12 +30,14 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
 
 @Log4j
-public class RFIDPalletApp extends SingleFrameApplication {
+public class RFIDPalletApp extends SingleFrameApplication implements Observer {
     private static final Logger LOGGER = Logger.getLogger(RFIDPalletApp.class);
     public static final int APPLICATION_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int APPLICATION_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
@@ -156,11 +158,16 @@ public class RFIDPalletApp extends SingleFrameApplication {
 
     private void initConnectJava() {
         LOGGER.info(System.getProperty("user.dir"));
-        SessionService.getInstance().storeInSession(RFIDPalletSessionKeys.SESSION_RFID_READING_STATE, false);
-        this.RFIDConnectJavaInstance = new CJIFluentConfigurator(ConnectCmdKey.OBSERVABLE_PATTERN,new LoggerImpl()).returnInstance();
+        RFIDConnectJavaInstance = new CJIFluentConfigurator(ConnectCmdKey.OBSERVABLE_PATTERN,new LoggerImpl()).returnInstance();
+        CJIFluentConfigurator.AddObserverStatic(this);
+        startConnectProcess();
+    }
 
+    private void startConnectProcess(){
         if(Utils.isNotNull(RFIDConnectJavaInstance)){
-            RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
+            // 1) start getDevicesList
+            RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.GET_DEVICES_LIST));
+            // 2) getDevisList result is coming up on update() method. Update will start connect command
         }else{
             LOGGER.error("RFIDConnect instance is null");
             showConnectJavaCheckDialog();
@@ -262,5 +269,22 @@ public class RFIDPalletApp extends SingleFrameApplication {
     protected void initialize(String[] args) {
         super.initialize(args);
         System.setProperty("java.net.useSystemProxies", RFIDProperties.getValue(RFIDProperties.PROPERTIES.USE_SYSTEM_PROXIES));
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        EventPropagatorObject event = (EventPropagatorObject) arg;
+        if(ConnectCmdKey.ACTION_GET_DEVICES_LIST.equals(event.getTitleEvent())){
+            if(Utils.isNotNull(event.getFunctionnalSucces()) && event.getFunctionnalSucces()){
+                if(Utils.isNotNull(RFIDConnectJavaInstance)){
+                    RFIDConnectJavaInstance.sendCommand(ConnectCommandToSend.createCommand(CommandManager.COMMAND_ACTION.CONNECT_DEVICE));
+                }else{
+                    LOGGER.error("RFIDConnect instance is null");
+                    showConnectJavaCheckDialog();
+                }
+            }else{
+                LOGGER.error("event associated to GET_DEVICES_LIST or funtionnalSucces method is null");
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.decathlon.log.rfid.pallet.ui.panel;
 
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.constants.ColorConstants;
 import com.decathlon.log.rfid.pallet.constants.Constants;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
@@ -218,8 +219,8 @@ public class ParamPanel extends JPanel {
         final SapClientExceptionType type = sapException.getType();
         String errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.standard");
 
-        if (sapException.hasEWMError()) {
-            errorMessage = chooseTheRightErrorMessage(sapException);
+        if (Utils.stringIsNotNullOrBlank(sapException.getMessage()) && sapException.getMessage().contains(EWMErrorCode.HU_NOT_FOUND.getErrorCode())) {
+            errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.hu.not.found");
         } else if (SapClientExceptionType.NOT_FOUND.equals(type)) {
             errorMessage = ResourceManager.getInstance().getString("ParamPanel.error.server.url.not.found");
         } else if (SapClientExceptionType.TIMEOUT.equals(type)) {
@@ -234,15 +235,6 @@ public class ParamPanel extends JPanel {
         RFIDPalletApp.getView().getParamPanel().setError(errorMessage);
     }
 
-    private String chooseTheRightErrorMessage(final SapClientException sapException) {
-        if (sapException.getErrorCode().isPresent()) {
-            if (EWMErrorCode.HU_NOT_FOUND.getErrorCode().equals(sapException.getErrorCode().get())) {
-                return ResourceManager.getInstance().getString("ParamPanel.error.server.hu.not.found");
-            }
-        }
-        return ResourceManager.getInstance().getString("ParamPanel.error.server.standard");
-    }
-
     private void notifyStartWsCallForGetHuData() {
         log.debug("notifyStartWsCallForGetHuData");
         RFIDPalletApp.getApplication().getMainFrame().getRootPane().setGlassPane(busyIndicator);
@@ -252,9 +244,9 @@ public class ParamPanel extends JPanel {
     private void notifyEndWsCallForGetHuData(java.util.List<TdoItem> result) {
         log.debug("notifyEndWsCallForGetHuData");
         busyIndicator.stop();
+        RFIDPalletApp.getView().getScanPanelLight().startScanner();
         RFIDPalletApp.getView().getScanPanelLight().initUIWithDataFromServer(result);
         RFIDPalletApp.getApplication().hideVirtualKeyBoard();
-        RFIDPalletApp.getView().getScanPanelLight().startScanner();
         RFIDPalletApp.getView().showScanLightPanel();
     }
 
