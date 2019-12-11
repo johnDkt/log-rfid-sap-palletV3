@@ -31,6 +31,7 @@ public class RetrieveHuSapConsumer {
         return sapConsumer.readEntitySet(buildUriForRetrieveHUItem(hu), clazz);
     }
 
+    //https://sapql3.pp.dktapp.cloud/sap/opu/odata/sap/Z_LOG_RFID_HU_CONTENT_SRV/HUIDENTSet(Lgnum='FR11',Huident='00000160000000183996',Workcenter='')?$expand=ToHuContent&$format=atom
     private String buildUriForRetrieveHUItem(final String searchedId) {
         final String entitySetName = "HUIDENTSet";
         final String warehouseKey = "Lgnum";

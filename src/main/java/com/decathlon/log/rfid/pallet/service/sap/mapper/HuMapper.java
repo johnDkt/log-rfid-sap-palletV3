@@ -1,5 +1,6 @@
 package com.decathlon.log.rfid.pallet.service.sap.mapper;
 
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.service.sap.entity.post.PostHuContent;
 import com.decathlon.log.rfid.pallet.service.sap.entity.post.PostHuIdent;
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
@@ -12,9 +13,14 @@ public class HuMapper {
                                         final List<TdoItem> items) {
         final PostHuIdent result = PostHuIdent.create(warehouse, hu, mastName);
 
-        for (final TdoItem item : items) {
-            result.getHuContents().add(mapToPostHuContent(item, hu, warehouse));
+        if(Utils.isNotNull(items)){
+            for (final TdoItem item : items) {
+                result.getHuContents().add(mapToPostHuContent(item, hu, warehouse));
+            }
+        }else{
+            items.add(new TdoItem("noItem",""));
         }
+
 
         return result;
     }

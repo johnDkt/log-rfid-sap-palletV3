@@ -1,5 +1,6 @@
 package com.decathlon.log.rfid.pallet.service.controller;
 
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.main.RFIDPalletApp;
 import com.decathlon.log.rfid.pallet.resources.ResourceManager;
 import com.decathlon.log.rfid.pallet.service.sap.SapService;
@@ -37,8 +38,16 @@ public class SendHuWithContentTask extends Task<Void, Void> {
 
     @Override
     protected Void doInBackground() throws SapClientException {
-        log.info(mastName + " - hu " + uat + " sending " + tags.size() + " tags ");
-        sapService.sendHuWithContent(mapper.mapToPostHuIdent(warehouse, uat, mastName, tags));
+        if(Utils.isNotNull(tags)){
+            if(!Utils.isBlankOrEmpty(tags)){
+                log.info(mastName + " - hu " + uat + " sending " + tags.size() + " tags ");
+                sapService.sendHuWithContent(mapper.mapToPostHuIdent(warehouse, uat, mastName, tags));
+            }else{
+                log.warn("data was not sent to SAP because tags list is empty");
+            }
+        }else{
+            log.warn("data was not sent to SAP because tags list is null");
+        }
         return null;
     }
 
