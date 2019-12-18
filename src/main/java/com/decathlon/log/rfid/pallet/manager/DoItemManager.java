@@ -82,6 +82,7 @@ public class DoItemManager {
         result.setEan(referred.getEan());
         result.setItem(referred.getItem());
         result.setRawDescription(referred.getRawDescription());
+        result.setEncodedEan(referred.getEncodedEan());
         result.setQtyTheo(qty);
         return result;
     }

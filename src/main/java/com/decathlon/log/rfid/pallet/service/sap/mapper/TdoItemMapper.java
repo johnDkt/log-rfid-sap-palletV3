@@ -1,5 +1,6 @@
 package com.decathlon.log.rfid.pallet.service.sap.mapper;
 
+import com.decathlon.connectJavaIntegrator.utils.Utils;
 import com.decathlon.log.rfid.pallet.service.sap.entity.get.HUContent;
 import com.decathlon.log.rfid.pallet.service.sap.entity.get.HuIdentSet;
 import com.decathlon.log.rfid.pallet.tdo.TdoItem;
@@ -23,6 +24,7 @@ public class TdoItemMapper {
         final TdoItem result = new TdoItem();
         result.setQtyTheo(huContent.getQuan().intValue());
         result.setEan(huContent.getEan11());
+        result.setEncodedEan(Utils.transformEanFieldReceiveFromWsIntoList(huContent.getEan11()));
         result.setItem(huContent.getMatnr());
         result.setRawDescription(huContent.getBrand() + " - " + huContent.getMaktx());
         return result;
